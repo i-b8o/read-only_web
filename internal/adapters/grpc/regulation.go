@@ -25,3 +25,13 @@ func (rs *readerStorage) GetOne(ctx context.Context, regulationID uint64) (entit
 
 	return adapters_grpc_dto.RegulationFromGetOneRegulationResponse(resp), err
 }
+
+func (rs *readerStorage) GetOneChapter(ctx context.Context, chapterID uint64) (entity.Chapter, error) {
+	req := &pb.GetOneChapterRequest{ID: chapterID}
+	resp, err := rs.client.GetOneChapter(ctx, req)
+	if err != nil {
+		return entity.Chapter{}, err
+	}
+
+	return adapters_grpc_dto.RegulationFromGetOneRegulationResponse(resp), err
+}
