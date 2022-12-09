@@ -1,0 +1,81 @@
+{{define "search_handler" -}}
+<script>
+    let typingTimer;
+    let searchInput = document.getElementById("s-input");
+    function debounce(callback, wait) {
+        let timeout;
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(function () { callback.apply(this, args); }, wait);
+        };
+    }
+    
+    searchInput.addEventListener("input", debounce( () => {
+        search();
+
+    }, 1000));
+
+    function httpGet(theUrl){
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+        xmlHttp.send( null );
+        return xmlHttp.responseText;
+    }
+
+    function search() {
+        searchQuery = searchInput.value;
+        let searchResults = document.getElementById("search-results");
+        let searchWindow = document.getElementById("search-window"); 
+        if (searchQuery.length > 3){
+            searchWindow.style.borderRadius = "8px 8px 0px 0px";
+            let respText = httpGet("/search?req="+searchQuery);
+            let parsedJSON = "";
+            if (respText.length > 0){
+                parsedJSON = JSON.parse(respText)
+            }
+            if (parsedJSON && parsedJSON.length > 0) {
+                searchResults.style.display = "flex";
+                let htmlStr = '';
+                let innerHtml = '';
+                let href = '';
+                let aClass = '';
+                let searchQueryFirstWord = searchQuery.split(" ")[0];
+                let re = new RegExp(searchQueryFirstWord, 'gi'); 
+                htmlStr = '';
+                for (var i=0;i<parsedJSON.length;i++) {
+                    innerHtml = '';
+                    href = '';
+                    aClass = '';
+                    text = parsedJSON[i].text.replace(/<\/?[^>]+(>|$)/g, "");
+                    // a regulation as the search result
+                    if(parsedJSON[i].r_id){
+                        aClass = "reg";
+                        href="/doc/" + parsedJSON[i].r_id;
+                        innerHtml = '<div class="r-inner">' + parsedJSON[i].r_name.replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>'
+                    } else if (parsedJSON[i].c_id && parsedJSON[i].p_id) { // a paragraph as the search result
+                        aClass = "par";
+                        href=parsedJSON[i].c_id + "#" + parsedJSON[i].p_id;
+                        innerHtml = '<div class="r-inner">' + parsedJSON[i].r_name + '</div>';
+                        innerHtml += '<div class="ch-inner">' + parsedJSON[i].c_name + '</div>';
+                        innerHtml += '<div class="p-inner">' + parsedJSON[i].text.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ").replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>';
+                    } else if (parsedJSON[i].c_id){
+                        aClass = "cha";
+                        href= "/chapter/" + parsedJSON[i].c_id;
+                        innerHtml = '<div class="r-inner">' + parsedJSON[i].r_name + '</div>';
+                        innerHtml += '<div class="ch-inner">' + parsedJSON[i].text.replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>';
+                    }
+
+                    htmlStr += '<a href="' + href + '" class="' + aClass + '">' + innerHtml + '</a>';
+                }
+                searchResults.innerHTML += htmlStr;
+            } else {
+                searchResults.innerHTML = '';
+                searchResults.style.display = "none";
+            }
+        } else {
+            searchWindow.style.borderRadius = "8px";
+            searchResults.style.display = "none";
+        }
+    }
+</script>
+{{end}}

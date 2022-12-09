@@ -1,0 +1,15 @@
+app:
+  id: read-only
+  name: Read Only Service
+  log-level: trace
+
+http:
+  ip: 0.0.0.0
+  port: 8080
+
+reader:
+  ip: 0.0.0.0
+  port: 30000
+
+template:
+  path: /internal/templates/

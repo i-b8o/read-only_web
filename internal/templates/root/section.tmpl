@@ -1,0 +1,13 @@
+{{define "section" -}}
+<section>
+    <h4>Оглавление</h4>
+    <h1>{{.Name}}</h1>
+    <p>{{.Title}}</p>
+    <hr color="#e5e7eb" size="1">
+    {{range .Chapters}}
+        <div><a class="table-of-contents" href="/chapter/{{.ID}}">{{if .Num}}{{.Num}}.  {{.Name}} {{else}}{{.Name}}{{ end }}</a></div>
+    {{else}}
+        <div>Такого документа не существует.</div>
+    {{end}}
+</section>
+{{end}}

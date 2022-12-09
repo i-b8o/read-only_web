@@ -1,0 +1,10 @@
+{{define "section" -}}
+<section class="docs-list">
+    <h1>Все документы</h1>
+    <ol>
+        {{range .Regulations}}
+        <a class="table-of-contents" href="/doc/{{.Id}}"><li>{{.Name}}</li></a>
+    {{end}}
+    </ol>
+</section>
+{{end}}

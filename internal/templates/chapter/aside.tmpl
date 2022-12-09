@@ -1,0 +1,12 @@
+{{define "aside" -}}
+    <div id="menu-blur" onclick="menuToggle()"></div>
+    <aside>
+        <nav>
+            <ul>
+                {{range .Chapters}}
+                    <li {{if eq .ID $.ChapterID}}id="active-link"{{else}}{{ end }}><a href="/chapter/{{.ID}}">{{if .Num}}{{.Num}}.  {{.Name}} {{else}}{{.Name}}{{ end }}</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </aside>
+{{end}}

@@ -1,0 +1,14 @@
+{{define "search_open_close" -}}
+<script>
+    // Search open/close
+    function searchClicked(){
+        document.getElementsByTagName("body")[0].classList.add("stop-scrolling");
+        document.getElementById("blur").style.display = "flex";
+        document.querySelector("#search-input input").focus()
+    }
+    function searchClose(el){
+        document.getElementsByTagName("body")[0].classList.remove("stop-scrolling");
+        document.getElementById("blur").style.display = "none";
+    }
+</script>
+{{end}}

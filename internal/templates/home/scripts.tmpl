@@ -1,0 +1,322 @@
+{{define "scripts" -}}
+{{template "mob_menu_toggle" .}}
+<script>
+let section = document.getElementsByTagName("section")[0];
+let dropDownElement = document.getElementById("btn-dropdown-options");
+const searchInputContainer = document.getElementsByClassName("search-input-container")[0]
+let homeSearchResults = document.getElementById("home-search-results-wrapper"); 
+let searchQuery = "";
+
+// remove unnecessary
+document.getElementsByClassName("wrapper")[0].style.display = "block";
+document.getElementsByTagName("aside")[0].style.display = "none";
+
+// search dropdown
+function dropDown(){
+    // Down
+    if (getComputedStyle(dropDownElement).getPropertyValue("display") == "none"){
+        dropDownElement.style.display = "flex";
+        document.querySelector("#dropdown > svg").style.transform = "rotate(180deg)";
+    } else {
+        // Up
+        dropDownElement.style.display = "none";
+        document.querySelector("#dropdown > svg").style.transform = "rotate(0deg)";
+    }
+}
+</script>
+<script>
+// Hide #btn-dropdown-options element when clicked outside .search-input-container
+document.addEventListener("click", (evt) => {
+    let targetEl = evt.target; // clicked element      
+    do {
+        if(targetEl == searchInputContainer) {
+            return;
+        }
+        targetEl = targetEl.parentNode;
+    } while (targetEl);
+    dropDownElement.style.display = "none";
+    document.querySelector("#dropdown > svg").style.transform = "rotate(0deg)";
+});
+</script>
+<script>
+class Pagination {
+    constructor() {
+    console.log("constructor")
+        this.index = 1;
+        this.firstPageIndex = 1;
+        this.prevBtnDisplay = "none";
+        this.nextBtnDisplay = "flex";
+        this.offset = 5;
+        this.lastPage = 0;
+    }
+
+    reset() {
+    console.log("reset")
+        this.prevBtnDisplay = this.index == 1 ?  "none" : "flex";
+        this.nextBtnDisplay = this.index == this.lastPage ?  "none" : "flex";
+        document.getElementsByClassName("search-input-container")[0].style.marginTop = "0";
+        homeSearchResults.innerHTML = '';
+        homeSearchResults.style.display = "none";
+    }
+
+    setActive(aArr){
+    console.log("setActive")
+        for (var i = 0; i < aArr.length; i++) {
+            if (parseInt(aArr[i].innerText) === this.index){
+                aArr[i].classList.add("pagination-active");
+                break;
+            }
+        }
+    }
+
+    shift(n){
+        console.log("shift")
+        if (n == 4){
+            this.shiftFwd(2);
+        } else if (n == 3){
+            this.shiftFwd(1);
+        } else if (n == 1 && this.index > 2){
+            this.shiftBack(1);
+        } else if (n == 0 && this.index > 2){
+            this.shiftBack(2);
+        }  else if (n == 0 && this.index == 2){
+            this.shiftBack(1);
+        }
+    }
+
+    set(el) {
+    console.log("set")
+        this.index = parseInt(el.innerText);
+        this.reset();
+        fetch(`/${r}search?req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
+        .then(res => res.json())
+        .then(json => {
+            searchRender(json, this.lastPage);
+            document.querySelector("#pagination > a.pagination-active").classList.remove("pagination-active");
+            let n = 0;
+            let aArr = Array.prototype.slice.apply( document.getElementById("pagination").getElementsByTagName("a")).slice(1, -1);
+            // Get the position of a clicked link
+            for (var i = 0; i < aArr.length; i++) {
+                if (aArr[i].innerText === el.innerText){
+                    n = i;
+                    break;
+                }
+            }
+            this.shift(n)
+            this.setActive(aArr);
+        });
+    }
+
+    shiftFwd(steps) {
+    console.log("shiftFwd")
+        let arr = Array.prototype.slice.apply( document.getElementById("pagination").getElementsByTagName("a")).slice(1, -1).map((el) => el.innerText = parseInt(el.innerText) + steps);
+        this.firstPageIndex = arr[0];
+    }
+
+    shiftBack(steps) {
+    console.log("shiftBack")
+        if (this.index == 0){
+            return;
+        }
+        let arr = Array.prototype.slice.apply( document.getElementById("pagination").getElementsByTagName("a")).slice(1, -1).map((el) => el.innerText = parseInt(el.innerText) - steps);
+        this.firstPageIndex = arr[0];
+    }
+    
+    next(){
+    console.log("next")
+        ++this.index;
+        this.reset();
+         fetch(`/${r}search?req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
+        .then(res => res.json())
+        .then(json => {
+            searchRender(json, this.lastPage);
+            document.querySelector("#pagination > a.pagination-active").classList.remove("pagination-active");
+            let n = 0;
+            let aArr = Array.prototype.slice.apply( document.getElementById("pagination").getElementsByTagName("a")).slice(1, -1);
+            // Get the position of a clicked link
+            for (var i = 0; i < aArr.length; i++) {
+                if (parseInt(aArr[i].innerText) === this.index){
+                    n = i;
+                    break;
+                }
+            }
+            this.shift(n)
+            this.setActive(aArr);
+        });
+    }
+
+    prev(){
+    console.log("prev")
+        if (this.index == 1) return;
+        --this.index;
+        this.reset();
+         fetch(`/${r}search?req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
+        .then(res => res.json())
+        .then(json => {
+            searchRender(json, this.lastPage);
+            document.querySelector("#pagination > a.pagination-active").classList.remove("pagination-active");
+            let n = 0;
+            let aArr = Array.prototype.slice.apply( document.getElementById("pagination").getElementsByTagName("a")).slice(1, -1);
+            // Get the position of a clicked link
+            for (var i = 0; i < aArr.length; i++) {
+                if (parseInt(aArr[i].innerText) === this.index){
+                    n = i;
+                    break;
+                }
+            }
+            this.shift(n)
+            this.setActive(aArr);
+        });
+    }
+
+    current(){
+        return this.index;
+    }
+}
+</script>
+<script>
+// Dropdown options handler
+let r = "";
+function optionsClicked(e){
+    let homeSearchInput = document.getElementById("search");
+    document.getElementsByClassName("dropdown-text")[0].innerText = e.innerText;
+    if (e.innerText == "Везде"){
+        r = "";
+        homeSearchInput.placeholder = "Поиск...";
+    } else if (e.innerText == "Документ"){
+        r = "r";
+        homeSearchInput.placeholder = "Поиск по названию документа...";
+    } else if (e.innerText == "Глава"){
+        r = "c";
+        homeSearchInput.placeholder = "Поиск по названию главы...";
+    } else if (e.innerText == "Абзац"){
+        r = "p";
+        homeSearchInput.placeholder = "Поиск в тексте...";
+    } 
+    document.querySelector("#btn-dropdown-options > ul > li.active").classList.remove("active");
+    e.classList.add("active");
+}
+</script>
+<script>
+function searchRender(json, n){
+    if (json && json.length > 0) {
+        var x = window.matchMedia("(min-width: 821px)")
+        if (x.matches) {
+            section.style.overflowY = "scroll";
+            document.getElementsByClassName("search-input-container")[0].style.marginTop = "70px";
+        }
+        homeSearchResults.style.display = "flex";
+        let htmlStr = '';
+        let innerHtml = '';
+        let href = '';
+        htmlStr = '';
+        for (var i=0;i<json.length;i++) {
+            innerHtml = '';
+            href = '';
+            aClass = '';
+            text = json[i].text.replace(/<\/?[^>]+(>|$)/g, "");
+            // a regulation as the search result
+            if(json[i].r_id){
+                aClass = "reg";
+                href="/doc/" + json[i].r_id;
+                innerHtml = '<div class="">' + json[i].r_name + '</div>'
+            } else if (json[i].p_id) { // a paragraph as the search result
+                aClass = "par";
+                href= "/chapter/" + json[i].c_id + "#" + json[i].p_id;
+                innerHtml = '<div class="">' + json[i].r_name + '</div>';
+                innerHtml += '<div class="">' + json[i].c_name + '</div>';
+                innerHtml += '<div class="">' + json[i].text.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ") + '</div>';
+            } else if (json[i].c_id){
+                aClass = "cha";
+                href= "/chapter/" + json[i].c_id;
+                innerHtml = '<div class="">' + json[i].r_name + '</div>';
+                innerHtml += '<div class="">' + json[i].text + '</div>';
+            }
+
+            htmlStr += '<a href="' + href + '" class="' + aClass + '">' + innerHtml + '</a>';
+        }
+        homeSearchResults.innerHTML += htmlStr;
+        if (n == 1) {
+        console.log("here 1");
+            homeSearchResults.innerHTML += `
+            <div id="home-search-pagination">
+                <div id="pagination">
+                    <a class="pagination-active" style="">1</a>
+                </div>
+            </div>
+            `
+        } else if (n > 5) {
+        console.log("here2");
+            homeSearchResults.innerHTML += `
+            <div id="home-search-pagination">
+                <div id="pagination">
+                    <a onclick="pagination.prev();" style="display:${pagination.prevBtnDisplay};">
+                        <i class="arrow left"></i>
+                        Назад
+                    </a>
+                    <a class="pagination-active" onclick="pagination.set(this);">${pagination.firstPageIndex}</a>
+                    <a onclick="pagination.set(this);">${pagination.firstPageIndex+1}</a>
+                    <a onclick="pagination.set(this);">${pagination.firstPageIndex+2}</a>
+                    <a onclick="pagination.set(this);">${pagination.firstPageIndex+3}</a>
+                    <a onclick="pagination.set(this);">${pagination.firstPageIndex+4}</a>
+                    <a onclick="pagination.next();" style="display:${pagination.nextBtnDisplay};">
+                        Вперед
+                        <i class="arrow right"></i>
+                    </a>
+                </div>
+            </div>`;
+            console.log("here2" + pagination.firstPageIndex);
+        } else {
+        console.log("here3");
+            let pageBtns = '';
+            for (var i = 0; i < n; i++) {
+                pageBtns += `<a ${i==0 ? `class="pagination-active` : ``} onclick="pagination.set(this);">${i+1}</a>`
+            }
+            homeSearchResults.innerHTML += `
+            <div id="home-search-pagination">
+                <div id="pagination">
+                    <a onclick="pagination.prev();" style="display:${pagination.prevBtnDisplay};">
+                        <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g  fill="#212121" fill-rule="nonzero"><path d="M4.29642509,11.9999996 L12.7875444,3.27301622 C13.0763983,2.97613862 13.0698938,2.50130943 12.7730162,2.21245555 C12.4761386,1.92360167 12.0013094,1.93010618 11.7124556,2.22698378 L2.71245555,11.4769838 C2.42918148,11.7681266 2.42918148,12.2318734 2.71245555,12.5230162 L11.7124556,21.7730162 C12.0013094,22.0698938 12.4761386,22.0763983 12.7730162,21.7875444 C13.0698938,21.4986906 13.0763983,21.0238614 12.7875444,20.7269838 L4.29642509,11.9999996 Z"></path></g></g></svg>
+                        Назад
+                    </a>
+                    ${pageBtns}
+                    <a onclick="pagination.next();" style="display:${pagination.nextBtnDisplay};">
+                        <span>Вперед</span>
+                        <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g  fill="#212121" fill-rule="nonzero"><path d="M4.29642509,11.9999996 L12.7875444,3.27301622 C13.0763983,2.97613862 13.0698938,2.50130943 12.7730162,2.21245555 C12.4761386,1.92360167 12.0013094,1.93010618 11.7124556,2.22698378 L2.71245555,11.4769838 C2.42918148,11.7681266 2.42918148,12.2318734 2.71245555,12.5230162 L11.7124556,21.7730162 C12.0013094,22.0698938 12.4761386,22.0763983 12.7730162,21.7875444 C13.0698938,21.4986906 13.0763983,21.0238614 12.7875444,20.7269838 L4.29642509,11.9999996 Z"></path></g></g></svg>
+                    </a>
+                </div>
+            </div>`;
+        }
+        
+    } else {
+        document.getElementsByClassName("search-input-container")[0].style.marginTop = "0";
+        homeSearchResults.innerHTML = '';
+        homeSearchResults.style.display = "none";
+        section.style.overflowY = "hidden";
+    }
+
+}
+</script>
+<script>
+// a search request initialization
+let pagination = new Pagination();
+document.getElementById('search').onkeydown = function(e){
+    if(e.keyCode == 13){
+        // submit
+        let homeSearchInput = document.getElementById("search");
+        searchQuery = homeSearchInput.value;
+        homeSearchResults.innerHTML = '';
+        homeSearchResults.style.display = "none";
+        fetch(`/${r}search?req=${searchQuery}&offset=0&limit=${pagination.offset}`)
+        .then(res => res.json())
+        .then(json => {
+            if (json && json.length > 0) {
+                pagination.lastPage = Math.ceil(json[0].count/pagination.offset);
+                searchRender(json, pagination.lastPage);
+                console.log("here");
+            }
+        });
+    }
+}
+</script>
+{{end}}

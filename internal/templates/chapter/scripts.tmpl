@@ -1,0 +1,39 @@
+{{define "scripts" -}}
+{{template "mob_menu_toggle" .}}
+{{template "search_open_close" .}}
+{{template "search_handler" .}}
+<script>
+    //Lift up an aside active link
+    var aside = document.getElementsByTagName("aside")[0];
+    var active_link = document.getElementById('active-link');
+    var topPos = active_link.offsetTop;
+    aside.scrollTop = topPos - 70;
+</script>
+<script>
+    // Remove an inline style width for a table if the width more than the viewport
+    let viewportWidth1 = document.body.clientWidth;
+    Array.prototype.slice.apply( document.getElementsByTagName("table") ).map(function(table){
+        let tableWidth = parseInt(window.getComputedStyle(table).width, 10);
+        if(viewportWidth1 < tableWidth){
+            table.removeAttribute("style");
+            let cols = Array.prototype.slice.apply(table.getElementsByTagName("col"));
+            cols.map((col) => col.removeAttribute("width"));
+        }
+    });
+    
+    if (window.matchMedia("(min-width: 821px)").matches){
+        Array.prototype.slice.apply( document.getElementsByTagName("table") ).map(function(table){
+            let tableWidth = parseInt(window.getComputedStyle(table).width, 10);
+            let asideWidth = parseInt(window.getComputedStyle(document.getElementsByTagName("aside")[0]).width, 10);
+            if(viewportWidth1 < tableWidth + asideWidth + 100){
+                table.removeAttribute("style");
+                table.style.maxWidth = "100%";
+                table.style.display = "block";
+                table.style.overflowX = "scroll";
+                let cols = Array.prototype.slice.apply(table.getElementsByTagName("col"));
+                cols.map((col) => col.removeAttribute("width"));
+            }
+        });
+    }
+</script>
+{{end}}

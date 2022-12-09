@@ -1,0 +1,27 @@
+ {{define "body" -}}
+ {{template "header" .}}
+        <div class="wrapper">
+            {{template "aside" .}}
+            <div>
+                {{template "section" .}}
+            </div>
+        </div> <!--wrapper-->
+        <div id="blur" onclick="searchClose(this)">
+            <div onclick='event.stopPropagation();' id="search-window">
+                <div id="search-input">
+                    <div>
+                        <svg viewBox="0 0 16 16" fill="none" preserveAspectRatio="xMidYMid meet" style="height: 20px; vertical-align: middle; width: 20px;"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 1a6 6 0 100 12A6 6 0 007 1zM0 7a7 7 0 1114 0A7 7 0 010 7z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M14.828 13.265l-1.639-1.372.642-.766 1.66 1.39a1.65 1.65 0 01.036 2.343l-.003.004-.664.663a1.65 1.65 0 01-2.343-.036l-1.39-1.66.766-.642 1.372 1.639a.65.65 0 00.893-.013l.657-.656a.65.65 0 00.013-.894z" fill="currentColor"></path></svg>
+                    </div>
+                    <div>
+                        <input id="s-input" placeholder="Поиск…" autocapitalize="sentences" autocomplete="off" autocorrect="on" dir="auto" spellcheck="true" type="text" value="" autofocus>
+                    </div>
+                    <div onclick="searchClose(this)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" preserveAspectRatio="xMidYMid meet" data-rnw-int-class="nearest___382-2774_" class="r-h7gdob" style="height: 18px; vertical-align: middle; width: 18px;"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                    </div>
+                </div>
+               
+            </div>
+            <div id="search-results"></div>
+        </div>
+        {{template "scripts" .}}
+{{end}}

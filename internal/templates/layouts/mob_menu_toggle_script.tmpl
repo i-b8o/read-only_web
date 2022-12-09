@@ -1,0 +1,28 @@
+{{define "mob_menu_toggle" -}}
+<script>
+    function menuToggle() {
+        let menuBlur = document.getElementById("menu-blur");
+        if(window.getComputedStyle(menuBlur).display == "flex"){
+            document.getElementsByTagName("body")[0].classList.remove("stop-scrolling");
+            menuBlur.style.display = "none";
+            menuBlur.style.position = "inherit";
+            if (window.location.pathname == "/"){
+                document.getElementsByTagName("aside")[0].style.display = "none";
+            }
+        } else {
+            menuBlur.style.position = "fixed";
+            menuBlur.style.display = "flex";
+            document.getElementsByTagName("body")[0].classList.add("stop-scrolling");
+            if (window.location.pathname == "/"){
+                document.getElementsByTagName("aside")[0].style.display = "block";
+            }
+        }
+        menu.classList.toggle('active');
+    }
+    
+    let hamburger = document.getElementById('hamburger');
+    let menu = document.getElementsByTagName('aside')[0];
+
+    hamburger.addEventListener('click', menuToggle);
+</script>
+{{end}}
