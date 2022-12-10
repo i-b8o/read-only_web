@@ -12,3 +12,10 @@ type Regulation struct {
 	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
 	Chapters     []Chapter  `json:"chapters"`
 }
+
+func (r Regulation) IsEmpty() bool {
+	if (r.Name == "") && (r.Abbreviation == "") && len(r.Chapters) == 0 {
+		return true
+	}
+	return false
+}

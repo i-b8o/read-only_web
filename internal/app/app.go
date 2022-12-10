@@ -7,11 +7,17 @@ import (
 	"net"
 	"net/http"
 	"os"
-	v1 "read-only_web/internal/controllers/v1"
+	v1 "read-only_web/internal/controllers/http/v1"
+	"read-only_web/internal/domain/service"
 
 	"time"
 
-	reader_adapter "read-only_web/internal/adapters/grpc"
+	chapter_adapter "read-only_web/internal/adapters/grpc/v1/chapter"
+	paragraph_adapter "read-only_web/internal/adapters/grpc/v1/paragraph"
+	regulation_adapter "read-only_web/internal/adapters/grpc/v1/regulation"
+	usecase_chapter "read-only_web/internal/domain/usecase/chapter"
+	usecase_regulation "read-only_web/internal/domain/usecase/regulation"
+
 	"read-only_web/internal/config"
 	templateManager "read-only_web/internal/templmanager"
 
@@ -27,6 +33,7 @@ import (
 type App struct {
 	cfg        *config.Config
 	router     *httprouter.Router
+	logger     logging.Logger
 	httpServer *http.Server
 }
 
@@ -53,7 +60,9 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	if err != nil {
 		return App{}, err
 	}
-	readerGrpcClient := pb.NewReaderGRPCClient(conn)
+	regulationGrpcClient := pb.NewRegulationGRPCClient(conn)
+	chapterGrpcClient := pb.NewChapterGRPCClient(conn)
+	paragraphGrpcClient := pb.NewParagraphGRPCClient(conn)
 
 	logger.Print("loading templates")
 	templateManager := templateManager.NewTemplateManager(config.Template.Path)
@@ -62,30 +71,26 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 		logger.Fatal(err)
 	}
 
-	adapter := reader_adapter.NewReaderStorage(readerGrpcClient)
+	regulationAdapter := regulation_adapter.NewRegulationStorage(regulationGrpcClient)
+	chapterAdapter := chapter_adapter.NewChapterStorage(chapterGrpcClient)
+	paragraphAdapter := paragraph_adapter.NewChapterStorage(paragraphGrpcClient)
 
-	linkService := service.NewLinkService(linkAdapter)
+	regulationService := service.NewRegulationService(regulationAdapter)
 	chapterService := service.NewChapterService(chapterAdapter)
 	paragraphService := service.NewParagraphService(paragraphAdapter)
-	regService := service.NewRegulationService(adapter)
-	speechService := service.NewSpeechService(speechAdapter)
-	searchService := service.NewSearchService(searchAdapter)
-	absentService := service.NewAbsentService(absentAdapter)
 
-	paragraphUsecase := paragraph_usecase.NewParagraphUsecase(paragraphService, chapterService, linkService, speechService)
-	chapterUsecase := chapter_usecase.NewChapterUsecase(chapterService, paragraphService, linkService, regService)
-	regUsecase := regulation_usecase.NewRegulationUsecase(regService, chapterService, paragraphService, linkService, speechService, absentService)
-	searchUsecase := search_usecase.NewSearchUsecase(searchService)
+	// paragraphUsecase := paragraph_usecase.NewParagraphUsecase(paragraphService, chapterService, linkService, speechService)
+	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, regulationService, logger)
+	regulationUsecase := usecase_regulation.NewRegulationUsecase(regulationService, chapterService, logger)
+	// searchUsecase := search_usecase.NewSearchUsecase(searchService)
 
-	paragraphHandler := v1.NewParagraphHandler(paragraphUsecase, config.HTTP.UseToInsertData)
-	chapterHandler := v1.NewChapterHandler(chapterUsecase, templateManager, config.HTTP.UseToInsertData)
-	regHandler := v1.NewRegulationHandler(regUsecase, templateManager, config.HTTP.UseToInsertData)
-	searchHandler := v1.NewSearchHandler(searchUsecase)
+	// paragraphHandler := v1.NewParagraphHandler(paragraphUsecase, config.HTTP.UseToInsertData)
+	chapterHandler := v1.NewChapterHandler(chapterUsecase, templateManager)
+	regulationHandler := v1.NewRegulationHandler(regulationUsecase, templateManager)
+	// searchHandler := v1.NewSearchHandler(searchUsecase)
 
-	regHandler.Register(router)
+	regulationHandler.Register(router)
 	chapterHandler.Register(router)
-	paragraphHandler.Register(router)
-	searchHandler.Register(router)
 
 	// read ca's cert, verify to client's certificate
 	// homeDir, err := os.UserHomeDir()
@@ -120,11 +125,11 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	// tlsCredentials := credentials.NewTLS(conf)
 
 	// grpcServer := grpc.NewServer(grpc.Creds(tlsCredentials))
-	grpcServer := grpc.NewServer()
-	server := grpc_service.NewRegulationGRPCService(regUsecase, chapterUsecase, paragraphUsecase)
-	pb.RegisterRegulationGRPCServer(grpcServer, server)
+	// grpcServer := grpc.NewServer()
+	// server := grpc_service.NewRegulationGRPCService(regulationUsecase, chapterUsecase, paragraphUsecase)
+	// pb.RegisterRegulationGRPCServer(grpcServer, server)
 
-	return App{cfg: config, router: router, grpcServer: grpcServer}, nil
+	return App{cfg: config, router: router, logger: logger}, nil
 }
 
 func (a *App) Run(ctx context.Context) error {
@@ -132,43 +137,20 @@ func (a *App) Run(ctx context.Context) error {
 	grp.Go(func() error {
 		return a.startHTTP(ctx)
 	})
-	grp.Go(func() error {
-		return a.startGRPC(ctx)
-	})
 	return grp.Wait()
 }
 
-func (a *App) startGRPC(ctx context.Context) error {
-	logger := logging.GetLogger(ctx)
-	logger.Info("start GRPC")
-	address := fmt.Sprintf("%s:%s", a.cfg.GRPC.BindIP, a.cfg.GRPC.Port)
-	listener, err := net.Listen("tcp", address)
-	if err != nil {
-		logger.Fatal("cannot start GRPC server: ", err)
-	}
-	logger.Print("start GRPC server on address %s", address)
-	err = a.grpcServer.Serve(listener)
-	if err != nil {
-		logger.Fatal("cannot start GRPC server: ", err)
-	}
-	return nil
-}
-
 func (a *App) startHTTP(ctx context.Context) error {
-	logger := logging.GetLogger(ctx).WithFields(map[string]interface{}{
-		"IP":   a.cfg.HTTP.IP,
-		"Port": a.cfg.HTTP.Port,
-	})
 
 	// Define the listener (Unix or TCP)
 	var listener net.Listener
 
-	logger.Infof("bind application to host: %s and port: %s", a.cfg.HTTP.IP, a.cfg.HTTP.Port)
+	a.logger.Infof("bind application to host: %s and port: %s", a.cfg.HTTP.IP, a.cfg.HTTP.Port)
 	var err error
 	// start up a tcp listener
-	listener, err = net.Listen("tcp", fmt.Sprintf("%s:%s", a.cfg.HTTP.IP, a.cfg.HTTP.Port))
+	listener, err = net.Listen("tcp", fmt.Sprintf("%s:%d", a.cfg.HTTP.IP, a.cfg.HTTP.Port))
 	if err != nil {
-		logger.Fatal(err)
+		a.logger.Fatal(err)
 	}
 
 	// create a new Cors handler
@@ -192,21 +174,21 @@ func (a *App) startHTTP(ctx context.Context) error {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	logger.Println("application initialized and started")
+	a.logger.Println("application initialized and started")
 
 	// accept incoming connections on the listener, creating a new service goroutine for each
 	if err := a.httpServer.Serve(listener); err != nil {
 		switch {
 		case errors.Is(err, http.ErrServerClosed):
-			logger.Warn("server shutdown")
+			a.logger.Warn("server shutdown")
 
 		default:
-			logger.Fatal(err)
+			a.logger.Fatal(err)
 		}
 	}
 	err = a.httpServer.Shutdown(context.Background())
 	if err != nil {
-		logger.Fatal(err)
+		a.logger.Fatal(err)
 	}
 	return nil
 }

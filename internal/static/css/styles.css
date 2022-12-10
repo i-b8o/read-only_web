@@ -10,8 +10,8 @@ body {
 
 header {
     display: flex;
-    background-color: white;
-    border-bottom: 1px solid #e9ebee;
+    background-color: #2a3035;
+    border-bottom: 1px solid #c3c6c8;
 }
 
 a {
@@ -19,12 +19,12 @@ a {
 }
 
 p {
-    color: rgba(59,69,78,1.00);
+    color: #4a5660;
     margin-bottom: 24px;
 }
 
 h1 {
-    color: rgba(59,69,78,1.00);
+    color: #4a5660;
 }
 
 table {
@@ -53,11 +53,11 @@ footer{
 }
 
 header svg {
-    fill: rgba(250,41,127,1.00)
+    fill: #56c1f2;
 }
 
 section > div {
-    color: rgba(59,69,78,1.00);
+    color: #4a5660;
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -67,7 +67,7 @@ aside {
     padding-bottom: 100px;
     height: 100vh;   
     overflow-y: scroll;
-    background-color: rgba(245,247,249,1.00);
+    background-color: #f2f4f6;
     border-right: 1px solid #e9ebee;
 }
 
@@ -134,7 +134,7 @@ aside {
 }
 
 .btn-text {
-    color: rgba(59,69,78,1.00);
+    color: #4a5660;
     font-weight: 500;
     line-height: 24px;
     font-size: 16px;
@@ -156,7 +156,7 @@ aside {
 }
 
 .r-inner{
-    color: rgba(59,69,78,1.00);
+    color: #4a5660;
     font-weight: 700;
     line-height: 22px;
     font-size: 14px;
@@ -349,7 +349,7 @@ nav li {
     #search {
         display: flex;
         cursor: pointer;
-        color: rgba(92,105,117,1.00);
+        color: white;
     }
 
     header a {
@@ -364,7 +364,7 @@ nav li {
     }
 
     header svg {
-        width: 24px;
+        width: 50px;
         height: auto;
         margin-right: 10px;
     }
@@ -409,7 +409,7 @@ nav li {
     }
 
     section  a {
-        color: rgba(250,41,127,1.00);
+        color: #56c1f2;;
     }
 
     .paragraph {
@@ -459,11 +459,11 @@ nav li {
     }
 
     .btn:hover .btn-text {
-        color: rgba(250,41,127,1.00);
+        color: #56c1f2;;
     }
 
     .btn:hover svg {
-        color: rgba(250,41,127,1.00);
+        color: #56c1f2;;
     }
 
     table p {
@@ -487,7 +487,7 @@ nav li {
     }
 
     #active-link a {
-    color: rgba(250,41,127,1.00);
+    color: #56c1f2;;
     }
 
     .right {
@@ -641,7 +641,7 @@ nav li {
     }
 
     section div {
-        color: rgba(59,69,78,1.00);
+        color: #4a5660;
     }
 
     section h1 {

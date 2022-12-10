@@ -13,12 +13,10 @@ import (
 const (
 	home         = "/"
 	documentRoot = "/doc/:id"
-	documents    = "/docs"
 )
 
 type RegulationUsecase interface {
 	GetDocumentRoot(ctx context.Context, stringID string) (entity.Regulation, []entity.Chapter)
-	GetDocuments(ctx context.Context) []entity.Regulation
 }
 
 type RegTemplateManager interface {
@@ -28,16 +26,14 @@ type RegTemplateManager interface {
 type regulationHandler struct {
 	regulationUsecase RegulationUsecase
 	templateManager   templateManager.TemplateManager
-	useForParsing     bool
 }
 
-func NewRegulationHandler(regulationUsecase RegulationUsecase, templateManager templateManager.TemplateManager, useForParsing bool) *regulationHandler {
-	return &regulationHandler{regulationUsecase: regulationUsecase, templateManager: templateManager, useForParsing: useForParsing}
+func NewRegulationHandler(regulationUsecase RegulationUsecase, templateManager templateManager.TemplateManager) *regulationHandler {
+	return &regulationHandler{regulationUsecase: regulationUsecase, templateManager: templateManager}
 }
 
 func (h *regulationHandler) Register(router *httprouter.Router) {
 	router.GET(documentRoot, h.DocumentRoot)
-	router.GET(documents, h.Documents)
 	router.GET(home, h.Home)
 
 }
@@ -71,7 +67,9 @@ func (h *regulationHandler) Home(w http.ResponseWriter, r *http.Request, params 
 
 func (h *regulationHandler) DocumentRoot(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	regulation, chapters := h.regulationUsecase.GetDocumentRoot(r.Context(), params.ByName("id"))
-
+	if regulation.IsEmpty() || len(chapters) == 0 {
+		w.WriteHeader(404)
+	}
 	data := Data{
 		Abbreviation: regulation.Abbreviation,
 		Title:        regulation.Title,
@@ -80,14 +78,4 @@ func (h *regulationHandler) DocumentRoot(w http.ResponseWriter, r *http.Request,
 	}
 
 	h.templateManager.RenderTemplate(w, "root", data)
-}
-
-func (h *regulationHandler) Documents(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-
-	regulations := h.regulationUsecase.GetDocuments(r.Context())
-	data := Data{
-		Regulations: regulations,
-	}
-
-	h.templateManager.RenderTemplate(w, "docs", data)
 }

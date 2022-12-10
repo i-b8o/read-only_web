@@ -33,13 +33,12 @@ func (h *chapterHandler) Register(router *httprouter.Router) {
 
 func (h *chapterHandler) GetChapter(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	regulation, chapter := h.chapterUsecase.GetChapter(r.Context(), params.ByName("id"))
-	// curdir, _ := os.Getwd()
-
-	// templateFiles := []string{curdir + "/internal/templates/root/root.tmpl", curdir + "/internal/templates/root/header.tmpl", curdir + "/internal/templates/chapter/aside.tmpl", curdir + "/internal/templates/chapter/section.tmpl", curdir + "/internal/templates/root/root_css.tmpl", curdir + "/internal/templates/root/mob_root_css.tmpl"}
-
-	// tmp := template.Must(template.ParseFiles(templateFiles...))
-
+	if regulation.IsEmpty() || chapter.IsEmpty() {
+		w.WriteHeader(404)
+		h.templateManager.RenderTemplate(w, "404", nil)
+	}
 	var prevChapter, nextChapter entity.Chapter
+
 	// the chapter order num starts from 1 (not 0)
 	if chapter.OrderNum > 1 {
 		prevChapter = regulation.Chapters[chapter.OrderNum-2]

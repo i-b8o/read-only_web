@@ -4,7 +4,8 @@ go 1.19
 
 require (
 	github.com/i-b8o/logging v0.0.0-20221105180025-715df517e91e
-	github.com/i-b8o/read-only_contracts v0.0.0-20221208182301-1d232dd0388f
+	github.com/i-b8o/nonsense v0.0.0-20220923103144-3618623a71ba
+	github.com/i-b8o/read-only_contracts v0.0.0-20221210091123-76f4206ea1a1
 	github.com/ilyakaznacheev/cleanenv v1.4.1
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/rs/cors v1.8.2

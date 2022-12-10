@@ -44,8 +44,10 @@ github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.6 h1:BKbKCqvP6I+rmFHt06ZmyQtvB8xAkWdhFyr0ZUNZcxQ=
 github.com/i-b8o/logging v0.0.0-20221105180025-715df517e91e h1:79fUA9ESQwOOydQ1tPTD16D4yirSENQeVP7chs4N/SY=
 github.com/i-b8o/logging v0.0.0-20221105180025-715df517e91e/go.mod h1:1yilJB+QuSWKvpRPTck8bq2jwPmOklJrqkKR5/q3EGg=
-github.com/i-b8o/read-only_contracts v0.0.0-20221208182301-1d232dd0388f h1:zfOTdd6gbsVcA4p7r7GOzrjOcRVHQ6mxSLMDo+YZqdI=
-github.com/i-b8o/read-only_contracts v0.0.0-20221208182301-1d232dd0388f/go.mod h1:+xArhQldMdQb+B4l1IFwRUmJNoTT1zJ4cx9vI765Qcc=
+github.com/i-b8o/nonsense v0.0.0-20220923103144-3618623a71ba h1:aPOsAE2mvEdAMxvwKKIpjDT0CQ7Dtd78zTBKmK/U8bc=
+github.com/i-b8o/nonsense v0.0.0-20220923103144-3618623a71ba/go.mod h1:IFuDNwZdIfZLDsIOHKLUnAnRer0e+GMfD2whNLhgwRA=
+github.com/i-b8o/read-only_contracts v0.0.0-20221210091123-76f4206ea1a1 h1:ZXPYUUEetutV7uUej3PY2LShlQyhO+7cSlZzNUlrmDA=
+github.com/i-b8o/read-only_contracts v0.0.0-20221210091123-76f4206ea1a1/go.mod h1:+xArhQldMdQb+B4l1IFwRUmJNoTT1zJ4cx9vI765Qcc=
 github.com/ilyakaznacheev/cleanenv v1.4.1 h1:zroQjmb8e3w6DBcgbgFXtlQTX8xP8XCOg1etuYv4hX0=
 github.com/ilyakaznacheev/cleanenv v1.4.1/go.mod h1:i0owW+HDxeGKE0/JPREJOdSCPIyOnmh6C0xhWAkF/xA=
 github.com/joho/godotenv v1.4.0 h1:3l4+N6zfMWnkbPEXKng2o2/MR5mSwTrBih4ZEkkz1lg=

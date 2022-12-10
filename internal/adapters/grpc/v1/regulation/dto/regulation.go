@@ -1,4 +1,4 @@
-package adapters_grpc_dto
+package adapters_grpc_regulation_dto
 
 import (
 	"read-only_web/internal/domain/entity"

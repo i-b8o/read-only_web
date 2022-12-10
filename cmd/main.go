@@ -17,9 +17,7 @@ func main() {
 	defer cancel()
 
 	cfg := config.GetConfig()
-	logger := logging.GetTelegramLogger(ctx, "reg_be", cfg.Logger.LoggerUsername, cfg.Logger.Token, cfg.Logger.ChatID)
-
-	ctx = logging.ContextWithLogger(ctx, logger)
+	logger := logging.GetTelegramLogger("trace", "read-only_web", cfg.Hook.Username, cfg.Hook.Token, cfg.Hook.ChatID)
 
 	logger.Info("config initializing")
 

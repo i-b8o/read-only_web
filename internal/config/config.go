@@ -10,6 +10,11 @@ import (
 )
 
 type Config struct {
+	Hook struct {
+		Username string `env:"TELEGRAM_USERNAME" env-required:"true"`
+		Token    string `env:"TELEGRAM_TOKEN" env-env-required:"true"`
+		ChatID   string `env:"TELEGRAM_CHAT_ID" env-required:"true"`
+	}
 	HTTP struct {
 		IP   string `yaml:"ip" env:"GRPC-IP"`
 		Port int    `yaml:"port" env:"GRPC-PORT"`
@@ -17,7 +22,7 @@ type Config struct {
 	Reader struct {
 		IP   string `yaml:"ip" env:"READER-IP"`
 		Port string `yaml:"port" env:"READER-PORT"`
-	} `yaml:"writer"`
+	} `yaml:"reader"`
 	AppConfig struct {
 		LogLevel string `yaml:"log-level" env:"LOG_LEVEL" env-default:"trace"`
 	} `yaml:"app"`
