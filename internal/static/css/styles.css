@@ -6,6 +6,7 @@
 
 body {
     font-family: Helvetica,Arial,sans-serif;
+    color: #4a5660;
 }
 
 header {
@@ -16,16 +17,13 @@ header {
 
 a {
     text-decoration: none;
+    color: #56c1f2;
 }
 
 p {
-    color: #4a5660;
     margin-bottom: 24px;
 }
 
-h1 {
-    color: #4a5660;
-}
 
 table {
     border-collapse: collapse;
@@ -57,7 +55,6 @@ header svg {
 }
 
 section > div {
-    color: #4a5660;
     font-size: 16px;
     line-height: 24px;
     font-weight: 400;
@@ -134,7 +131,6 @@ aside {
 }
 
 .btn-text {
-    color: #4a5660;
     font-weight: 500;
     line-height: 24px;
     font-size: 16px;
@@ -156,7 +152,6 @@ aside {
 }
 
 .r-inner{
-    color: #4a5660;
     font-weight: 700;
     line-height: 22px;
     font-size: 14px;
@@ -364,7 +359,7 @@ nav li {
     }
 
     header svg {
-        width: 50px;
+        width: 25px;
         height: auto;
         margin-right: 10px;
     }
@@ -408,9 +403,7 @@ nav li {
         padding-right: 50px;
     }
 
-    section  a {
-        color: #56c1f2;;
-    }
+
 
     .paragraph {
         margin-bottom:20px;
@@ -641,7 +634,6 @@ nav li {
     }
 
     section div {
-        color: #4a5660;
     }
 
     section h1 {
