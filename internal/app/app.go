@@ -12,9 +12,9 @@ import (
 
 	"time"
 
-	chapter_adapter "read-only_web/internal/adapters/grpc/v1/chapter"
-	paragraph_adapter "read-only_web/internal/adapters/grpc/v1/paragraph"
-	regulation_adapter "read-only_web/internal/adapters/grpc/v1/regulation"
+	chapter_provider "read-only_web/internal/data_providers/grpc/v1/chapter"
+	paragraph_provider "read-only_web/internal/data_providers/grpc/v1/paragraph"
+	regulation_provider "read-only_web/internal/data_providers/grpc/v1/regulation"
 	usecase_chapter "read-only_web/internal/domain/usecase/chapter"
 	usecase_regulation "read-only_web/internal/domain/usecase/regulation"
 
@@ -71,13 +71,13 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 		logger.Fatal(err)
 	}
 
-	regulationAdapter := regulation_adapter.NewRegulationStorage(regulationGrpcClient)
-	chapterAdapter := chapter_adapter.NewChapterStorage(chapterGrpcClient)
-	paragraphAdapter := paragraph_adapter.NewChapterStorage(paragraphGrpcClient)
+	regulationProvider := regulation_provider.NewRegulationStorage(regulationGrpcClient)
+	chapterProvider := chapter_provider.NewChapterStorage(chapterGrpcClient)
+	paragraphProvider := paragraph_provider.NewChapterStorage(paragraphGrpcClient)
 
-	regulationService := service.NewRegulationService(regulationAdapter)
-	chapterService := service.NewChapterService(chapterAdapter)
-	paragraphService := service.NewParagraphService(paragraphAdapter)
+	regulationService := service.NewRegulationService(regulationProvider)
+	chapterService := service.NewChapterService(chapterProvider)
+	paragraphService := service.NewParagraphService(paragraphProvider)
 
 	// paragraphUsecase := paragraph_usecase.NewParagraphUsecase(paragraphService, chapterService, linkService, speechService)
 	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, regulationService, logger)

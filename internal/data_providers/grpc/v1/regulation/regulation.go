@@ -2,7 +2,7 @@ package grpc_adapter
 
 import (
 	"context"
-	dto "read-only_web/internal/adapters/grpc/v1/regulation/dto"
+	dto "read-only_web/internal/data_providers/grpc/v1/regulation/dto"
 	"read-only_web/internal/domain/entity"
 
 	pb "github.com/i-b8o/read-only_contracts/pb/reader/v1"

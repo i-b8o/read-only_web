@@ -3,7 +3,7 @@ package chapter_adapter
 import (
 	"context"
 	"fmt"
-	dto "read-only_web/internal/adapters/grpc/v1/chapter/dto"
+	dto "read-only_web/internal/data_providers/grpc/v1/chapter/dto"
 	"read-only_web/internal/domain/entity"
 
 	pb "github.com/i-b8o/read-only_contracts/pb/reader/v1"
