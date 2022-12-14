@@ -18,17 +18,25 @@ type Config struct {
 	HTTP struct {
 		IP   string `yaml:"ip" env:"GRPC-IP"`
 		Port int    `yaml:"port" env:"GRPC-PORT"`
+		CORS struct {
+			AllowedMethods []string `yaml:"allowed_methods" env:"HTTP-CORS-ALLOWED-METHODS"`
+			AllowedOrigins []string `yaml:"allowed_origins"`
+			AllowedHeaders []string `yaml:"allowed_headers"`
+		} `yaml:"cors"`
 	} `yaml:"http"`
-	Reader struct {
-		IP   string `yaml:"ip" env:"READER-IP"`
-		Port string `yaml:"port" env:"READER-PORT"`
-	} `yaml:"reader"`
 	AppConfig struct {
 		LogLevel string `yaml:"log-level" env:"LOG_LEVEL" env-default:"trace"`
 	} `yaml:"app"`
 	Template struct {
 		Path string `yaml:"path" env:"TEMPLATEPATH"`
 	} `yaml:"template"`
+	PostgreSQL struct {
+		Username string `yaml:"username" env:"POSTGRES_USER" env-required:"true"`
+		Password string `yaml:"password" env:"POSTGRES_PASSWORD" env-required:"true"`
+		Host     string `yaml:"host" env:"POSTGRES_HOST" env-required:"true"`
+		Port     string `yaml:"port" env:"POSTGRES_PORT" env-required:"true"`
+		Database string `yaml:"database" env:"POSTGRES_DB" env-required:"true"`
+	} `yaml:"postgresql"`
 }
 
 const (

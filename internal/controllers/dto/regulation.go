@@ -2,7 +2,6 @@ package dto
 
 import (
 	"fmt"
-	"read-only_web/internal/domain/entity"
 )
 
 type CreateRegulationRequestDTO struct {
@@ -16,16 +15,4 @@ func (dto *CreateRegulationRequestDTO) Validate() error {
 	}
 
 	return nil
-}
-
-type GetFullRegulationRequestDTO struct {
-	RegulationID uint64 `json:"regulation_id"`
-}
-
-type GetFullRegulationJSONResponseDTO struct {
-	Regulation entity.Regulation `json:"regulation"`
-}
-
-type GetFullRegulationDartResponseDTO struct {
-	Regulation string `json:"regulation"`
 }

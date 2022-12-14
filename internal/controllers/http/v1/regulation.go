@@ -52,7 +52,10 @@ type Data struct {
 	ChapterID    uint64
 	Name         string
 	Abbreviation string
+	Header       string
 	Title        string
+	Meta         string
+	Keywords     string
 	Prev         entity.Chapter
 	Next         entity.Chapter
 	Num          string
@@ -72,7 +75,10 @@ func (h *regulationHandler) DocumentRoot(w http.ResponseWriter, r *http.Request,
 	}
 	data := Data{
 		Abbreviation: regulation.Abbreviation,
+		Header:       regulation.Header,
 		Title:        regulation.Title,
+		Meta:         regulation.Meta,
+		Keywords:     regulation.Keywords,
 		Name:         regulation.Name,
 		Chapters:     chapters,
 	}

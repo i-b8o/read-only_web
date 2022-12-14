@@ -1,4 +1,4 @@
-package postgressql
+package chapter_provider
 
 import (
 	"context"
@@ -6,8 +6,6 @@ import (
 	client "read-only_web/pkg/client/postgresql"
 
 	"read-only_web/internal/domain/entity"
-
-	pb "github.com/i-b8o/read-only_contracts/pb/reader/v1"
 )
 
 type chapterStorage struct {
@@ -19,10 +17,10 @@ func NewChapterStorage(client client.PostgreSQLClient) *chapterStorage {
 }
 
 // Get returns an chapter associated with the given ID
-func (cs *chapterStorage) Get(ctx context.Context, chapterID uint64) (*entity.Chapter, error) {
+func (cs *chapterStorage) Get(ctx context.Context, chapterID uint64) (entity.Chapter, error) {
 	const sql = `SELECT name,num,order_num,r_id,updated_at FROM "chapter" WHERE id = $1 ORDER BY order_num`
 	row := cs.client.QueryRow(ctx, sql, chapterID)
-	chapter := &entity.Chapter{}
+	chapter := entity.Chapter{}
 	err := row.Scan(&chapter.Name, &chapter.Num, &chapter.OrderNum, &chapter.RegulationID, &chapter.UpdatedAt)
 	if err != nil {
 		return chapter, err
@@ -31,10 +29,10 @@ func (cs *chapterStorage) Get(ctx context.Context, chapterID uint64) (*entity.Ch
 }
 
 // GetAll returns all chapters associated with the given ID
-func (cs *chapterStorage) GetAll(ctx context.Context, regulationID uint64) ([]*pb.ReaderChapter, error) {
+func (cs *chapterStorage) GetAll(ctx context.Context, regulationID uint64) ([]entity.Chapter, error) {
 	const sql = `SELECT id,name,num,order_num FROM "chapter" WHERE r_id = $1 ORDER BY order_num`
 
-	var chapters []*pb.ReaderChapter
+	var chapters []entity.Chapter
 
 	rows, err := cs.client.Query(ctx, sql, regulationID)
 	if err != nil {
@@ -43,7 +41,7 @@ func (cs *chapterStorage) GetAll(ctx context.Context, regulationID uint64) ([]*p
 	defer rows.Close()
 
 	for rows.Next() {
-		chapter := &pb.ReaderChapter{}
+		chapter := entity.Chapter{}
 		if err = rows.Scan(
 			&chapter.ID, &chapter.Name, &chapter.Num, &chapter.OrderNum,
 		); err != nil {

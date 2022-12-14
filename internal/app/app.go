@@ -9,12 +9,14 @@ import (
 	"os"
 	v1 "read-only_web/internal/controllers/http/v1"
 	"read-only_web/internal/domain/service"
+	"read-only_web/pkg/client/postgresql"
 
 	"time"
 
-	chapter_provider "read-only_web/internal/data_providers/grpc/v1/chapter"
-	paragraph_provider "read-only_web/internal/data_providers/grpc/v1/paragraph"
-	regulation_provider "read-only_web/internal/data_providers/grpc/v1/regulation"
+	chapter_provider "read-only_web/internal/data_providers/db/postgresql/chapter"
+	paragraph_provider "read-only_web/internal/data_providers/db/postgresql/paragraph"
+	regulation_provider "read-only_web/internal/data_providers/db/postgresql/regulation"
+
 	usecase_chapter "read-only_web/internal/domain/usecase/chapter"
 	usecase_regulation "read-only_web/internal/domain/usecase/regulation"
 
@@ -22,12 +24,9 @@ import (
 	templateManager "read-only_web/internal/templmanager"
 
 	"github.com/i-b8o/logging"
-	pb "github.com/i-b8o/read-only_contracts/pb/reader/v1"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc"
 )
 
 type App struct {
@@ -50,19 +49,16 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	curdir, _ := os.Getwd()
 	router.ServeFiles("/static/*filepath", http.Dir(curdir+"/internal/static/"))
 
-	logger.Print("heartbeat initializing")
+	pgConfig := postgresql.NewPgConfig(
+		config.PostgreSQL.Username, config.PostgreSQL.Password,
+		config.PostgreSQL.Host, config.PostgreSQL.Port, config.PostgreSQL.Database,
+	)
 
 	logger.Print("Postgres initializing")
-	conn, err := grpc.Dial(
-		fmt.Sprintf("%s:%s", config.Reader.IP, config.Reader.Port),
-		grpc.WithInsecure(),
-	)
+	pgClient, err := postgresql.NewClient(context.Background(), 5, time.Second*5, pgConfig)
 	if err != nil {
-		return App{}, err
+		logger.Fatal(err)
 	}
-	regulationGrpcClient := pb.NewRegulationGRPCClient(conn)
-	chapterGrpcClient := pb.NewChapterGRPCClient(conn)
-	paragraphGrpcClient := pb.NewParagraphGRPCClient(conn)
 
 	logger.Print("loading templates")
 	templateManager := templateManager.NewTemplateManager(config.Template.Path)
@@ -71,76 +67,27 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 		logger.Fatal(err)
 	}
 
-	regulationProvider := regulation_provider.NewRegulationStorage(regulationGrpcClient)
-	chapterProvider := chapter_provider.NewChapterStorage(chapterGrpcClient)
-	paragraphProvider := paragraph_provider.NewChapterStorage(paragraphGrpcClient)
+	regulationProvider := regulation_provider.NewRegulationStorage(pgClient)
+	chapterProvider := chapter_provider.NewChapterStorage(pgClient)
+	paragraphProvider := paragraph_provider.NewParagraphStorage(pgClient)
 
 	regulationService := service.NewRegulationService(regulationProvider)
 	chapterService := service.NewChapterService(chapterProvider)
 	paragraphService := service.NewParagraphService(paragraphProvider)
 
-	// paragraphUsecase := paragraph_usecase.NewParagraphUsecase(paragraphService, chapterService, linkService, speechService)
 	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, regulationService, logger)
 	regulationUsecase := usecase_regulation.NewRegulationUsecase(regulationService, chapterService, logger)
-	// searchUsecase := search_usecase.NewSearchUsecase(searchService)
 
-	// paragraphHandler := v1.NewParagraphHandler(paragraphUsecase, config.HTTP.UseToInsertData)
 	chapterHandler := v1.NewChapterHandler(chapterUsecase, templateManager)
 	regulationHandler := v1.NewRegulationHandler(regulationUsecase, templateManager)
-	// searchHandler := v1.NewSearchHandler(searchUsecase)
 
 	regulationHandler.Register(router)
 	chapterHandler.Register(router)
-
-	// read ca's cert, verify to client's certificate
-	// homeDir, err := os.UserHomeDir()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// caPem, err := ioutil.ReadFile(homeDir + "/certs/ca-cert.pem")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// // create cert pool and append ca's cert
-	// certPool := x509.NewCertPool()
-	// if !certPool.AppendCertsFromPEM(caPem) {
-	// 	log.Fatal(err)
-	// }
-
-	// // read server cert & key
-	// serverCert, err := tls.LoadX509KeyPair(homeDir+"/certs/server-cert.pem", homeDir+"/certs/server-key.pem")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// // configuration of the certificate what we want to
-	// conf := &tls.Config{
-	// 	Certificates: []tls.Certificate{serverCert},
-	// 	ClientAuth:   tls.RequireAndVerifyClientCert,
-	// 	ClientCAs:    certPool,
-	// }
-
-	// //create tls certificate
-	// tlsCredentials := credentials.NewTLS(conf)
-
-	// grpcServer := grpc.NewServer(grpc.Creds(tlsCredentials))
-	// grpcServer := grpc.NewServer()
-	// server := grpc_service.NewRegulationGRPCService(regulationUsecase, chapterUsecase, paragraphUsecase)
-	// pb.RegisterRegulationGRPCServer(grpcServer, server)
 
 	return App{cfg: config, router: router, logger: logger}, nil
 }
 
 func (a *App) Run(ctx context.Context) error {
-	grp, ctx := errgroup.WithContext(ctx)
-	grp.Go(func() error {
-		return a.startHTTP(ctx)
-	})
-	return grp.Wait()
-}
-
-func (a *App) startHTTP(ctx context.Context) error {
 
 	// Define the listener (Unix or TCP)
 	var listener net.Listener
@@ -155,13 +102,9 @@ func (a *App) startHTTP(ctx context.Context) error {
 
 	// create a new Cors handler
 	c := cors.New(cors.Options{
-		AllowedMethods:     []string{http.MethodGet, http.MethodPost},
-		AllowedOrigins:     []string{"http://localhost:10000"},
-		AllowCredentials:   true,
-		AllowedHeaders:     []string{"Content-Type"},
-		OptionsPassthrough: true,
-		ExposedHeaders:     []string{"Access-Token", "Refresh-Token", "Location", "Authorization", "Content-Disposition"},
-		Debug:              false,
+		AllowedMethods: a.cfg.HTTP.CORS.AllowedMethods,
+		AllowedOrigins: a.cfg.HTTP.CORS.AllowedOrigins,
+		AllowedHeaders: a.cfg.HTTP.CORS.AllowedHeaders,
 	})
 
 	// apply the CORS specification on the request, and add relevant CORS headers

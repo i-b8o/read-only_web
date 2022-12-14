@@ -1,13 +1,13 @@
-package postgressql
+package paragraph_provider
 
 import (
 	"context"
 	"errors"
 	"fmt"
 
+	"read-only_web/internal/domain/entity"
 	client "read-only_web/pkg/client/postgresql"
 
-	pb "github.com/i-b8o/read-only_contracts/pb/reader/v1"
 	"github.com/jackc/pgconn"
 )
 
@@ -20,10 +20,10 @@ func NewParagraphStorage(client client.PostgreSQLClient) *paragraphStorage {
 }
 
 // GetAllById returns all paragraphs associated with the given chapter ID
-func (ps *paragraphStorage) GetAll(ctx context.Context, chapterID uint64) ([]*pb.ReaderParagraph, error) {
+func (ps *paragraphStorage) GetAll(ctx context.Context, chapterID uint64) ([]entity.Paragraph, error) {
 	const sql = `SELECT paragraph_id, order_num, is_nft, is_table, has_links, class, content, c_id FROM "paragraph" WHERE c_id = $1 AND content!='-' ORDER BY order_num`
 
-	var paragraphs []*pb.ReaderParagraph
+	var paragraphs []entity.Paragraph
 
 	rows, err := ps.client.Query(ctx, sql, chapterID)
 	if err != nil {
@@ -37,7 +37,7 @@ func (ps *paragraphStorage) GetAll(ctx context.Context, chapterID uint64) ([]*pb
 	defer rows.Close()
 
 	for rows.Next() {
-		paragraph := &pb.ReaderParagraph{}
+		paragraph := entity.Paragraph{}
 		if err = rows.Scan(
 			&paragraph.ID, &paragraph.Num, &paragraph.IsNFT, &paragraph.IsTable, &paragraph.HasLinks, &paragraph.Class, &paragraph.Content, &paragraph.ChapterID,
 		); err != nil {

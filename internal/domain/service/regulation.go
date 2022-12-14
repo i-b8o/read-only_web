@@ -6,7 +6,7 @@ import (
 )
 
 type RegulationStorage interface {
-	GetOne(ctx context.Context, regulationID uint64) (entity.Regulation, error)
+	Get(ctx context.Context, regulationID uint64) (entity.Regulation, error)
 }
 type regulationService struct {
 	storage RegulationStorage
@@ -17,5 +17,5 @@ func NewRegulationService(storage RegulationStorage) *regulationService {
 }
 
 func (s *regulationService) GetOne(ctx context.Context, regulationID uint64) (entity.Regulation, error) {
-	return s.storage.GetOne(ctx, regulationID)
+	return s.storage.Get(ctx, regulationID)
 }
