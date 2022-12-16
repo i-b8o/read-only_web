@@ -5,11 +5,11 @@ app:
 
 http:
   ip: 0.0.0.0
-  port: 8080
+  port: 334
   cors:
     allowed-methods: ["GET"]
-    allowed-origins:
-      - "http://localhost:8080"
+    # allowed-origins:
+    # - "https://localhost:8080"
     allowed-headers:
       - "Content-Type"
 

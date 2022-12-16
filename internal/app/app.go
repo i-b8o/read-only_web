@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	v1 "read-only_web/internal/controllers/http/v1"
@@ -90,12 +89,12 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 func (a *App) Run(ctx context.Context) error {
 
 	// Define the listener (Unix or TCP)
-	var listener net.Listener
+	// var listener net.Listener
 
 	a.logger.Infof("bind application to host: %s and port: %s", a.cfg.HTTP.IP, a.cfg.HTTP.Port)
 	var err error
 	// start up a tcp listener
-	listener, err = net.Listen("tcp", fmt.Sprintf("%s:%d", a.cfg.HTTP.IP, a.cfg.HTTP.Port))
+	// listener, err = net.Listen("tcp", fmt.Sprintf("%s:%d", a.cfg.HTTP.IP, a.cfg.HTTP.Port))
 	if err != nil {
 		a.logger.Fatal(err)
 	}
@@ -112,6 +111,7 @@ func (a *App) Run(ctx context.Context) error {
 
 	// define parameters for an HTTP server
 	a.httpServer = &http.Server{
+		Addr:         fmt.Sprintf(":%d", a.cfg.HTTP.Port),
 		Handler:      handler,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
@@ -120,7 +120,7 @@ func (a *App) Run(ctx context.Context) error {
 	a.logger.Println("application initialized and started")
 
 	// accept incoming connections on the listener, creating a new service goroutine for each
-	if err := a.httpServer.Serve(listener); err != nil {
+	if err := a.httpServer.ListenAndServeTLS("/etc/ssl/certs/read-only.crt", "/etc/ssl/certs/read-only.key"); err != nil {
 		switch {
 		case errors.Is(err, http.ErrServerClosed):
 			a.logger.Warn("server shutdown")
