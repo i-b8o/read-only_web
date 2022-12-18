@@ -64,6 +64,7 @@ type Data struct {
 	Updated      string
 }
 
+// TODO center the logo for mobile 
 func (h *regulationHandler) Home(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	h.templateManager.RenderTemplate(w, "home", nil)
 }
