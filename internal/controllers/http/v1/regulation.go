@@ -52,10 +52,10 @@ type Data struct {
 	ChapterID    uint64
 	Name         string
 	Abbreviation string
-	Header       string
-	Title        string
-	Meta         string
-	Keywords     string
+	Header       *string
+	Title        *string
+	Meta         *string
+	Keywords     *string
 	Prev         entity.Chapter
 	Next         entity.Chapter
 	Num          string

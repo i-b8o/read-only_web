@@ -7,10 +7,10 @@ type Regulation struct {
 	Pseudo       string     `json:"r_pseudo,omitempty"`
 	Name         string     `json:"name"`
 	Abbreviation string     `json:"abbreviation"`
-	Header       string     `json:"header"`
-	Title        string     `json:"title"`
-	Meta         string     `json:"meta"`
-	Keywords     string     `json:"key_words"`
+	Header       *string    `json:"header"`
+	Title        *string    `json:"title"`
+	Meta         *string    `json:"meta"`
+	Keywords     *string    `json:"key_words"`
 	CreatedAt    time.Time  `json:"created_at,omitempty"`
 	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
 	Chapters     []Chapter  `json:"chapters"`

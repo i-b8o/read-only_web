@@ -26,6 +26,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
+	"golang.org/x/sync/errgroup"
 )
 
 type App struct {
@@ -34,6 +35,8 @@ type App struct {
 	logger     logging.Logger
 	httpServer *http.Server
 }
+
+var curdir, _ = os.Getwd()
 
 func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	logger := logging.GetLogger(config.AppConfig.LogLevel)
@@ -45,7 +48,6 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	router.Handler(http.MethodGet, "/swagger", http.RedirectHandler("swagger/index.html", http.StatusMovedPermanently))
 	router.Handler(http.MethodGet, "/swagger/*any", httpSwagger.WrapHandler)
 
-	curdir, _ := os.Getwd()
 	router.ServeFiles("/static/*filepath", http.Dir(curdir+"/internal/static/"))
 
 	pgConfig := postgresql.NewPgConfig(
@@ -87,6 +89,20 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 }
 
 func (a *App) Run(ctx context.Context) error {
+	grp, ctx := errgroup.WithContext(ctx)
+	grp.Go(func() error {
+		return a.startHTTP(ctx)
+	})
+	// redirect
+	grp.Go(func() error {
+		return http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, fmt.Sprintf("https://%s:443", a.cfg.HTTP.IP)+r.RequestURI, http.StatusMovedPermanently)
+		}))
+	})
+	return grp.Wait()
+}
+
+func (a *App) startHTTP(ctx context.Context) error {
 
 	// Define the listener (Unix or TCP)
 	// var listener net.Listener
@@ -120,7 +136,7 @@ func (a *App) Run(ctx context.Context) error {
 	a.logger.Println("application initialized and started")
 
 	// accept incoming connections on the listener, creating a new service goroutine for each
-	if err := a.httpServer.ListenAndServeTLS("/etc/ssl/certs/read-only.crt", "/etc/ssl/certs/read-only.key"); err != nil {
+	if err := a.httpServer.ListenAndServeTLS(curdir+"/.certs/read-only.crt", curdir+"/.certs/read-only.key"); err != nil {
 		switch {
 		case errors.Is(err, http.ErrServerClosed):
 			a.logger.Warn("server shutdown")

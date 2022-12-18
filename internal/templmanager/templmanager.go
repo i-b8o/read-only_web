@@ -41,7 +41,8 @@ func (tm TemplateManager) LoadTemplates(ctx context.Context, logger logging.Logg
 	}
 
 	curdir, _ := os.Getwd()
-
+	logger.Infof("current directory: %s\n", curdir)
+	logger.Infof("template path: %s\n", tm.templatePath)
 	folders, err := OSReadDir(curdir + tm.templatePath)
 	if err != nil {
 		logger.Fatal(err)
@@ -66,6 +67,7 @@ func (tm TemplateManager) LoadTemplates(ctx context.Context, logger logging.Logg
 			return err
 		}
 		includeFiles = append(includeFiles, layoutFiles...)
+		logger.Infof("path: %s\n", folderName)
 		templates[folderName] = template.Must(templates[folderName].ParseFiles(includeFiles...))
 	}
 	logger.Info("templates loaded successfully")

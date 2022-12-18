@@ -47,6 +47,7 @@ func (h *chapterHandler) GetChapter(w http.ResponseWriter, r *http.Request, para
 		nextChapter = regulation.Chapters[chapter.OrderNum]
 	}
 
+	// TODO #active-link do not appear any more
 	var templParagraphs []TemplParagraph
 	for _, p := range chapter.Paragraphs {
 		templParagraph := TemplParagraph{ID: p.ID, Num: p.Num, Class: p.Class, Content: template.HTML(p.Content), ChapterID: p.ChapterID, IsTable: p.IsTable}

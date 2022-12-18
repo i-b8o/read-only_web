@@ -11,10 +11,10 @@ import (
 
 type Config struct {
 	Hook struct {
-		Username string `env:"TELEGRAM_USERNAME" env-required:"true"`
-		Token    string `env:"TELEGRAM_TOKEN" env-env-required:"true"`
-		ChatID   string `env:"TELEGRAM_CHAT_ID" env-required:"true"`
-	}
+		Username string `yaml:"name"`
+		Token    string `yaml:"token"`
+		ChatID   string `yaml:"id"`
+	} `yaml:"hook"`
 	HTTP struct {
 		IP   string `yaml:"ip" env:"GRPC-IP"`
 		Port int    `yaml:"port" env:"GRPC-PORT"`
@@ -30,6 +30,9 @@ type Config struct {
 	Template struct {
 		Path string `yaml:"path" env:"TEMPLATEPATH"`
 	} `yaml:"template"`
+	Certs struct {
+		Path string `yaml:"path"`
+	} `yaml:"certs"`
 	PostgreSQL struct {
 		Username string `yaml:"username" env:"POSTGRES_USER" env-required:"true"`
 		Password string `yaml:"password" env:"POSTGRES_PASSWORD" env-required:"true"`
@@ -50,7 +53,8 @@ var once sync.Once
 
 func GetConfig() *Config {
 	once.Do(func() {
-		flag.StringVar(&configPath, FlagConfigPathName, "configs/config.local.yaml", "this is app config file")
+		curdir, _ := os.Getwd()
+		flag.StringVar(&configPath, FlagConfigPathName, curdir+"/.configs/config.local.yaml", "this is app config file")
 		flag.Parse()
 
 		log.Print("config init")
