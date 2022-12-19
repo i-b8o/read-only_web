@@ -68,6 +68,7 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 	s := viewModelState{
 		ChapterID:    chapter.ID,
 		Abbreviation: regulation.Abbreviation,
+		Title:        &chapter.Name,
 		Name:         chapter.Name,
 		Num:          chapter.Num,
 		Chapters:     regulation.Chapters,
