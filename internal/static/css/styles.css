@@ -544,11 +544,7 @@ nav li {
         margin-bottom: 16px;
     }
 
-    .svg {
-        width: 5vw;
-        height: auto;
-        margin-right: 10px;
-    }
+
 
     aside {
         display: none;
@@ -597,12 +593,13 @@ nav li {
 
     header a {
         display: flex;
-        align-items: center;
+        flex-direction: row;
+        justify-content: center;
         color: black;
     }
 
     #search {
-        margin-right: 20px;
+        padding: 10px;
         color: rgba(92,105,117,1.00);
     }
 
@@ -668,9 +665,7 @@ nav li {
         -webkit-align-items: center;
         -webkit-box-align: center;
         align-items: center;
-        width: 40px;
-        height: 40px;
-        margin-right: 8px;
+        padding: 10px;
         color: rgba(92,105,117,1.00);
     }
 

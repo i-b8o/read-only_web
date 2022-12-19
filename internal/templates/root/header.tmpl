@@ -1,11 +1,11 @@
 {{define "header" -}}
     <header>
-        <div id="hamburger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" preserveAspectRatio="xMidYMid meet" style="height: 18px; vertical-align: middle; width: 18px;"><path d="M3 12h18M3 6h18M3 18h18"></path></svg></div>
+        {{template "hamburger" .}}
         <a href="/">
             <div class="svg">
                {{template "logo" .}}
             </div>
         </a>
-        <div onclick="searchClicked()" id="search"><svg viewBox="0 0 24 24" fill="none" preserveAspectRatio="xMidYMid meet" data-rnw-int-class="nearest___382-2721_" class="r-h7gdob" style="height: 18px; vertical-align: middle; width: 18px;"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.5 4a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM2 10.5a8.5 8.5 0 1117 0 8.5 8.5 0 01-17 0z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M15.093 15.093a1 1 0 011.414 0l5.2 5.2a1 1 0 01-1.414 1.414l-5.2-5.2a1 1 0 010-1.414z" fill="currentColor"></path></svg><div>Поиск</div></div>
+        <div onclick="searchClicked()" id="search"><svg viewBox="0 0 24 24" fill="none" preserveAspectRatio="xMidYMid meet" data-rnw-int-class="nearest___382-2721_" class="r-h7gdob" style="height: 24px; vertical-align: middle; width: 24px;"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.5 4a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM2 10.5a8.5 8.5 0 1117 0 8.5 8.5 0 01-17 0z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M15.093 15.093a1 1 0 011.414 0l5.2 5.2a1 1 0 01-1.414 1.414l-5.2-5.2a1 1 0 010-1.414z" fill="currentColor"></path></svg><div>Поиск</div></div>
     </header>
 {{end}}
