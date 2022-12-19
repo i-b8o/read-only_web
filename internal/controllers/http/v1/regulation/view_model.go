@@ -9,7 +9,7 @@ type RegulationUsecase interface {
 	GetDocumentRoot(ctx context.Context, stringID string) entity.Regulation
 }
 
-type ViewModelState struct {
+type viewModelState struct {
 	Abbreviation string
 	Header       *string
 	Title        *string
@@ -19,19 +19,19 @@ type ViewModelState struct {
 	Chapters     []entity.ChapterInfo
 }
 
-type ViewModel struct {
+type viewModel struct {
 	regulationUsecase RegulationUsecase
 }
 
-func NewViewModel(regulationUsecase RegulationUsecase) *ViewModel {
-	return &ViewModel{regulationUsecase: regulationUsecase}
+func NewViewModel(regulationUsecase RegulationUsecase) *viewModel {
+	return &viewModel{regulationUsecase: regulationUsecase}
 }
 
-func (vm ViewModel) GetState(ctx context.Context, id string) *ViewModelState {
+func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 	regulation := vm.regulationUsecase.GetDocumentRoot(ctx, id)
 	if regulation.IsEmpty() {
 		return nil
 	}
-	s := ViewModelState{Abbreviation: regulation.Abbreviation, Header: regulation.Header, Title: &regulation.Name, Meta: regulation.Meta, Keywords: regulation.Keywords, Name: regulation.Name, Chapters: regulation.Chapters}
+	s := viewModelState{Abbreviation: regulation.Abbreviation, Header: regulation.Header, Title: &regulation.Name, Meta: regulation.Meta, Keywords: regulation.Keywords, Name: regulation.Name, Chapters: regulation.Chapters}
 	return &s
 }
