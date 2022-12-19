@@ -29,10 +29,10 @@ func (cs *chapterStorage) Get(ctx context.Context, chapterID uint64) (entity.Cha
 }
 
 // GetAll returns all chapters associated with the given ID
-func (cs *chapterStorage) GetAll(ctx context.Context, regulationID uint64) ([]entity.Chapter, error) {
+func (cs *chapterStorage) GetAll(ctx context.Context, regulationID uint64) ([]entity.ChapterInfo, error) {
 	const sql = `SELECT id,name,num,order_num FROM "chapter" WHERE r_id = $1 ORDER BY order_num`
 
-	var chapters []entity.Chapter
+	var chapters []entity.ChapterInfo
 
 	rows, err := cs.client.Query(ctx, sql, regulationID)
 	if err != nil {
@@ -41,7 +41,7 @@ func (cs *chapterStorage) GetAll(ctx context.Context, regulationID uint64) ([]en
 	defer rows.Close()
 
 	for rows.Next() {
-		chapter := entity.Chapter{}
+		chapter := entity.ChapterInfo{}
 		if err = rows.Scan(
 			&chapter.ID, &chapter.Name, &chapter.Num, &chapter.OrderNum,
 		); err != nil {

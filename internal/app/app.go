@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	v1 "read-only_web/internal/controllers/http/v1"
 	"read-only_web/internal/domain/service"
 	"read-only_web/pkg/client/postgresql"
 
@@ -18,6 +17,9 @@ import (
 
 	usecase_chapter "read-only_web/internal/domain/usecase/chapter"
 	usecase_regulation "read-only_web/internal/domain/usecase/regulation"
+
+	chapter_controller "read-only_web/internal/controllers/http/v1/chapter"
+	regulation_controller "read-only_web/internal/controllers/http/v1/regulation"
 
 	"read-only_web/internal/config"
 	templateManager "read-only_web/internal/templmanager"
@@ -79,8 +81,10 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, regulationService, logger)
 	regulationUsecase := usecase_regulation.NewRegulationUsecase(regulationService, chapterService, logger)
 
-	chapterHandler := v1.NewChapterHandler(chapterUsecase, templateManager)
-	regulationHandler := v1.NewRegulationHandler(regulationUsecase, templateManager)
+	regulationViewModel := regulation_controller.NewViewModel(regulationUsecase)
+	chapterViewModel := chapter_controller.NewViewModel(chapterUsecase)
+	chapterHandler := chapter_controller.NewChapterHandler(chapterViewModel, templateManager)
+	regulationHandler := regulation_controller.NewRegulationHandler(regulationViewModel, templateManager)
 
 	regulationHandler.Register(router)
 	chapterHandler.Register(router)

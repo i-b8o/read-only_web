@@ -13,7 +13,7 @@ type RegulationService interface {
 	GetOne(ctx context.Context, regulationID uint64) (entity.Regulation, error)
 }
 type ChapterService interface {
-	GetAllChapters(ctx context.Context, regulationID uint64) ([]entity.Chapter, error)
+	GetAllChapters(ctx context.Context, regulationID uint64) ([]entity.ChapterInfo, error)
 }
 
 type regulationUsecase struct {

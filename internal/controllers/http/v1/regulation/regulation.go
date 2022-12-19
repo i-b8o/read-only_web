@@ -17,11 +17,11 @@ type RegTemplateManager interface {
 }
 
 type regulationHandler struct {
-	vm              viewModel
+	vm              *ViewModel
 	templateManager templateManager.TemplateManager
 }
 
-func NewRegulationHandler(vm viewModel, templateManager templateManager.TemplateManager) *regulationHandler {
+func NewRegulationHandler(vm *ViewModel, templateManager templateManager.TemplateManager) *regulationHandler {
 	return &regulationHandler{vm: vm, templateManager: templateManager}
 }
 

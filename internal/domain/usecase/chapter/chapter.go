@@ -11,7 +11,7 @@ import (
 
 type ChapterService interface {
 	GetOneChapter(ctx context.Context, chapterID uint64) (entity.Chapter, error)
-	GetAllChapters(ctx context.Context, regulationID uint64) ([]entity.Chapter, error)
+	GetAllChapters(ctx context.Context, regulationID uint64) ([]entity.ChapterInfo, error)
 }
 
 type ParagraphService interface {
