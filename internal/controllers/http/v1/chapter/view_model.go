@@ -21,19 +21,19 @@ type paragraph struct {
 
 type viewModelState struct {
 	// regulations  []entity.Regulation
-	chapterID    uint64
-	name         string
-	abbreviation string
+	ChapterID    uint64
+	Name         string
+	Abbreviation string
 	// header       *string
-	// title        *string
+	Title *string
 	// meta         *string
 	// keywords     *string
-	prev       entity.ChapterInfo
-	next       entity.ChapterInfo
-	num        string
-	paragraphs []paragraph
-	chapters   []entity.ChapterInfo
-	updated    string
+	Prev       entity.ChapterInfo
+	Next       entity.ChapterInfo
+	Num        string
+	Paragraphs []paragraph
+	Chapters   []entity.ChapterInfo
+	Updated    string
 }
 
 type viewModel struct {
@@ -61,20 +61,20 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 
 	var paragraphs []paragraph
 	for _, p := range chapter.Paragraphs {
-		templParagraph := paragraph{ID: p.ID, Num: p.Num, Class: p.Class, Content: template.HTML(p.Content), ChapterID: p.ChapterID, IsTable: p.IsTable}
-		paragraphs = append(paragraphs, templParagraph)
+		paragraph := paragraph{ID: p.ID, Num: p.Num, Class: p.Class, Content: template.HTML(p.Content), ChapterID: p.ChapterID, IsTable: p.IsTable}
+		paragraphs = append(paragraphs, paragraph)
 	}
 
 	s := viewModelState{
-		chapterID:    chapter.ID,
-		abbreviation: regulation.Abbreviation,
-		name:         chapter.Name,
-		num:          chapter.Num,
-		chapters:     regulation.Chapters,
-		prev:         prevChapter,
-		next:         nextChapter,
-		paragraphs:   paragraphs,
-		updated:      chapter.UpdatedAt.Format("02.01.2006"),
+		ChapterID:    chapter.ID,
+		Abbreviation: regulation.Abbreviation,
+		Name:         chapter.Name,
+		Num:          chapter.Num,
+		Chapters:     regulation.Chapters,
+		Prev:         prevChapter,
+		Next:         nextChapter,
+		Paragraphs:   paragraphs,
+		Updated:      chapter.UpdatedAt.Format("02.01.2006"),
 	}
 	return &s
 }
