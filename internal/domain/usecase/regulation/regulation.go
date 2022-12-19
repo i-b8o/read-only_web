@@ -26,23 +26,24 @@ func NewRegulationUsecase(regulationService RegulationService, chapterService Ch
 	return &regulationUsecase{regulationService: regulationService, chapterService: chapterService, logger: logger}
 }
 
-func (u regulationUsecase) GetDocumentRoot(ctx context.Context, stringID string) (entity.Regulation, []entity.Chapter) {
+func (u regulationUsecase) GetDocumentRoot(ctx context.Context, stringID string) entity.Regulation {
 	uint64ID, err := strconv.ParseUint(stringID, 10, 64)
 	if err != nil {
 		u.logger.Error(err)
-		return entity.Regulation{}, nil
+		return entity.Regulation{}
 	}
 	regulation, err := u.regulationService.GetOne(ctx, uint64ID)
 	if err != nil {
 		u.logger.Error(err)
-		return entity.Regulation{}, nil
+		return entity.Regulation{}
 	}
 
 	regulation.Name = nonsense.Capitalize(regulation.Name)
 	chapters, err := u.chapterService.GetAllChapters(ctx, uint64ID)
 	if err != nil {
 		u.logger.Error(err)
-		return entity.Regulation{}, nil
+		return entity.Regulation{}
 	}
-	return regulation, chapters
+	regulation.Chapters = chapters
+	return regulation
 }

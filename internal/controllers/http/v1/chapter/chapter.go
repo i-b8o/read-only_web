@@ -1,4 +1,4 @@
-package v1
+package chapter_controller
 
 import (
 	"context"
@@ -35,7 +35,7 @@ func (h *chapterHandler) GetChapter(w http.ResponseWriter, r *http.Request, para
 	regulation, chapter := h.chapterUsecase.GetChapter(r.Context(), params.ByName("id"))
 	if regulation.IsEmpty() || chapter.IsEmpty() {
 		w.WriteHeader(404)
-		h.templateManager.RenderTemplate(w, "404", nil)
+		h.templateManager.RenderTemplate(w, "404", "asdasdasdasda")
 		return
 	}
 	var prevChapter, nextChapter entity.Chapter

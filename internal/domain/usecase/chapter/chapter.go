@@ -33,6 +33,7 @@ func NewChapterUsecase(chapterService ChapterService, paragraphService Paragraph
 	return &chapterUsecase{chapterService: chapterService, paragraphService: paragraphService, regulationService: regulationService, logger: logger}
 }
 
+// TODO do not send an error when a chapter does not exist
 func (u chapterUsecase) GetChapter(ctx context.Context, chapterID string) (entity.Regulation, entity.Chapter) {
 	uint64ID, err := strconv.ParseUint(chapterID, 10, 64)
 	if err != nil {
