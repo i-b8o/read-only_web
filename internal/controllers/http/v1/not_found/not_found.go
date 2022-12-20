@@ -7,6 +7,10 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+const (
+	notFound = "/404"
+)
+
 type notFoundHandler struct {
 	templateManager templateManager.TemplateManager
 }
@@ -17,7 +21,13 @@ func NewNotFoundHandler(templateManager templateManager.TemplateManager) *notFou
 
 func (h *notFoundHandler) Register(router *httprouter.Router) {
 	router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		s := getState()
-		h.templateManager.RenderTemplate(w, "not_found", s)
+		http.Redirect(w, r, "/404", http.StatusSeeOther)
 	})
+	router.GET(notFound, h.NotFound)
+
+}
+
+func (h *notFoundHandler) NotFound(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	s := getState()
+	h.templateManager.RenderTemplate(w, "not_found", s)
 }

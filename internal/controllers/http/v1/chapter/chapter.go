@@ -27,7 +27,7 @@ func (h *chapterHandler) Register(router *httprouter.Router) {
 func (h *chapterHandler) GetChapter(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	state := h.vm.GetState(r.Context(), params.ByName("id"))
 	if state == nil {
-
+		http.Redirect(w, r, "/404", http.StatusSeeOther)
 		return
 	}
 	h.templateManager.RenderTemplate(w, "chapter", state)

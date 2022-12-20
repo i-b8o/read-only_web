@@ -36,5 +36,9 @@ func (h *docHandler) Home(w http.ResponseWriter, r *http.Request, params httprou
 
 func (h *docHandler) DocumentRoot(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	state := h.vm.GetState(r.Context(), params.ByName("id"))
+	if state == nil {
+		http.Redirect(w, r, "/404", http.StatusSeeOther)
+		return
+	}
 	h.templateManager.RenderTemplate(w, "doc", state)
 }
