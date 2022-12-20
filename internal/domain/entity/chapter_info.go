@@ -6,10 +6,3 @@ type ChapterInfo struct {
 	Num      string `json:"num,omitempty"`
 	OrderNum uint32 `json:"order_num"`
 }
-
-func (c ChapterInfo) IsEmpty() bool {
-	if (c.Name == "") && (c.Num == "") {
-		return true
-	}
-	return false
-}

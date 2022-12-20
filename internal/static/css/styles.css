@@ -176,7 +176,7 @@ aside {
 }
 
 nav:first-of-type {
-    margin-top: 50px;
+    margin-top: 120px;
 }
 
 nav a {
@@ -332,7 +332,8 @@ nav li {
         align-items: center;
         padding-left: 100px;
         height: 70px;
-        width: auto;
+        width: 100vw;
+        position: fixed;
     }
     
     table {
@@ -383,13 +384,14 @@ nav li {
         grid-template-columns: max(300px, (100vw - 910px) / 2) auto;
     }
 
+    main {
+        overflow-y: scroll;
+    }
+
     section {
-        padding-top: 15px;
         padding-left: 50px;
         padding-bottom: 100px;
         height: 100vh;   
-        overflow-y: scroll;
-        
     }
 
     @media (min-width: 1430px) {
@@ -420,6 +422,7 @@ nav li {
 
     .btns-wrapper {
         margin-top: 80px;
+        margin-bottom: 120px
     }
 
     .btn {

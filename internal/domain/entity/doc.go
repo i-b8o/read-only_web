@@ -15,10 +15,3 @@ type Doc struct {
 	UpdatedAt    *time.Time    `json:"updated_at,omitempty"`
 	Chapters     []ChapterInfo `json:"chapters"`
 }
-
-func (r Doc) IsEmpty() bool {
-	if (r.Name == "") && (r.Abbreviation == "") && len(r.Chapters) == 0 {
-		return true
-	}
-	return false
-}

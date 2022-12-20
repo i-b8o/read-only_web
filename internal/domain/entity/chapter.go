@@ -15,10 +15,3 @@ type Chapter struct {
 	Paragraphs []Paragraph `json:"paragraphs,omitempty"`
 	UpdatedAt  *time.Time  `json:"updated_at,omitempty"`
 }
-
-func (c Chapter) IsEmpty() bool {
-	if (c.Name == "") && (c.Num == "") && len(c.Paragraphs) == 0 {
-		return true
-	}
-	return false
-}

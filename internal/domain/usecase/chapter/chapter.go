@@ -33,34 +33,34 @@ func NewChapterUsecase(chapterService ChapterService, paragraphService Paragraph
 }
 
 // TODO do not send an error when a chapter does not exist
-func (u chapterUsecase) GetChapter(ctx context.Context, chapterID string) (entity.Doc, entity.Chapter) {
+func (u chapterUsecase) GetChapter(ctx context.Context, chapterID string) (*entity.Doc, *entity.Chapter) {
 	uint64ID, err := strconv.ParseUint(chapterID, 10, 64)
 	if err != nil {
 		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
-		return entity.Doc{}, entity.Chapter{}
+		return nil, nil
 	}
 
 	chapter, err := u.chapterService.GetOneChapter(ctx, uint64ID)
 	if err != nil {
 		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
-		return entity.Doc{}, entity.Chapter{}
+		return nil, nil
 	}
 
 	chapter.Paragraphs, err = u.paragraphService.GetAll(ctx, uint64ID)
 	if err != nil {
 		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
-		return entity.Doc{}, entity.Chapter{}
+		return nil, nil
 	}
 	doc, err := u.docService.GetOne(ctx, chapter.DocID)
 	if err != nil {
 		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
-		return entity.Doc{}, entity.Chapter{}
+		return nil, nil
 	}
 	chapters, err := u.chapterService.GetAllChapters(ctx, chapter.DocID)
 	if err != nil {
 		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
-		return entity.Doc{}, entity.Chapter{}
+		return nil, nil
 	}
 	doc.Chapters = chapters
-	return doc, chapter
+	return &doc, &chapter
 }

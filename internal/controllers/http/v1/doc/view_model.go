@@ -29,7 +29,7 @@ func NewViewModel(docUsecase DocUsecase) *viewModel {
 
 func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 	doc := vm.docUsecase.GetDocumentRoot(ctx, id)
-	if doc.IsEmpty() {
+	if doc == nil {
 		return nil
 	}
 	s := viewModelState{Abbreviation: doc.Abbreviation, Header: doc.Header, Title: &doc.Name, Meta: doc.Meta, Keywords: doc.Keywords, Name: doc.Name, Chapters: doc.Chapters}

@@ -10,11 +10,3 @@ type Paragraph struct {
 	Content   string `json:"content,omitempty"`
 	ChapterID uint64 `json:"chapterid,omitempty"`
 }
-
-type ParagraphsInput struct {
-	Paragraphs []Paragraph
-}
-
-type ParagraphsOutput struct {
-	Message string
-}

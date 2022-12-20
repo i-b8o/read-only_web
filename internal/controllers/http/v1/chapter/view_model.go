@@ -7,7 +7,7 @@ import (
 )
 
 type ChapterUsecase interface {
-	GetChapter(ctx context.Context, chapterID string) (entity.Doc, entity.Chapter)
+	GetChapter(ctx context.Context, chapterID string) (*entity.Doc, *entity.Chapter)
 }
 
 type paragraph struct {
@@ -46,7 +46,7 @@ func NewViewModel(chapterUsecase ChapterUsecase) *viewModel {
 
 func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 	doc, chapter := vm.chapterUsecase.GetChapter(ctx, id)
-	if doc.IsEmpty() || chapter.IsEmpty() {
+	if doc == nil || chapter == nil {
 		return nil
 	}
 	var prevChapter, nextChapter entity.ChapterInfo
