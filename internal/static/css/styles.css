@@ -29,9 +29,6 @@ main::-webkit-scrollbar-thumb:window-inactive {
 	background: #f2f4f6;
 }
 
-aside::-webkit-scrollbar {
-}
-
 header {
     display: flex;
     background-color: #2a3035;
