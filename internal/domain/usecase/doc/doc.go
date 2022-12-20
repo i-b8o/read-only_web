@@ -26,24 +26,24 @@ func NewDocUsecase(docService DocService, chapterService ChapterService, logger 
 	return &docUsecase{docService: docService, chapterService: chapterService, logger: logger}
 }
 
-func (u docUsecase) GetDocumentRoot(ctx context.Context, stringID string) entity.Doc {
+func (u docUsecase) GetDocumentRoot(ctx context.Context, stringID string) *entity.Doc {
 	uint64ID, err := strconv.ParseUint(stringID, 10, 64)
 	if err != nil {
-		u.logger.Error(err)
-		return entity.Doc{}
+		u.logger.Infof("error '%v' has occurred while GetDocumentRoot processing reguklationID: %s", err, stringID)
+		return nil
 	}
 	doc, err := u.docService.GetOne(ctx, uint64ID)
 	if err != nil {
-		u.logger.Error(err)
-		return entity.Doc{}
+		u.logger.Infof("error '%v' has occurred while GetDocumentRoot processing reguklationID: %s", err, stringID)
+		return nil
 	}
 
 	doc.Name = nonsense.Capitalize(doc.Name)
 	chapters, err := u.chapterService.GetAllChapters(ctx, uint64ID)
 	if err != nil {
-		u.logger.Error(err)
-		return entity.Doc{}
+		u.logger.Infof("error '%v' has occurred while GetDocumentRoot processing reguklationID: %s", err, stringID)
+		return nil
 	}
 	doc.Chapters = chapters
-	return doc
+	return &doc
 }

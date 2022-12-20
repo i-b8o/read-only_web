@@ -2,7 +2,6 @@ package usecase_chapter
 
 import (
 	"context"
-	"fmt"
 	"read-only_web/internal/domain/entity"
 	"strconv"
 
@@ -37,33 +36,29 @@ func NewChapterUsecase(chapterService ChapterService, paragraphService Paragraph
 func (u chapterUsecase) GetChapter(ctx context.Context, chapterID string) (entity.Doc, entity.Chapter) {
 	uint64ID, err := strconv.ParseUint(chapterID, 10, 64)
 	if err != nil {
-		u.logger.Error(err)
+		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
 		return entity.Doc{}, entity.Chapter{}
 	}
 
 	chapter, err := u.chapterService.GetOneChapter(ctx, uint64ID)
 	if err != nil {
-		fmt.Println("chapter")
-		u.logger.Error(err)
+		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
 		return entity.Doc{}, entity.Chapter{}
 	}
 
 	chapter.Paragraphs, err = u.paragraphService.GetAll(ctx, uint64ID)
 	if err != nil {
-		fmt.Println("paragraphs")
-		u.logger.Error(err)
+		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
 		return entity.Doc{}, entity.Chapter{}
 	}
 	doc, err := u.docService.GetOne(ctx, chapter.DocID)
 	if err != nil {
-		fmt.Println("doc")
-		u.logger.Error(err)
+		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
 		return entity.Doc{}, entity.Chapter{}
 	}
 	chapters, err := u.chapterService.GetAllChapters(ctx, chapter.DocID)
 	if err != nil {
-		fmt.Println("chapters")
-		u.logger.Error(err)
+		u.logger.Infof("error '%v' has occurred while GetChapter processing chapterID: %s", err, chapterID)
 		return entity.Doc{}, entity.Chapter{}
 	}
 	doc.Chapters = chapters

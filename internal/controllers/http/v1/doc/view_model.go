@@ -6,7 +6,7 @@ import (
 )
 
 type DocUsecase interface {
-	GetDocumentRoot(ctx context.Context, stringID string) entity.Doc
+	GetDocumentRoot(ctx context.Context, stringID string) *entity.Doc
 }
 
 type viewModelState struct {
