@@ -1,0 +1,40 @@
+{{define "css" -}}
+body {
+    color: black;
+}
+header, aside {
+    display: none;
+}
+h1 {
+    display:inline-block;
+    margin:0;
+    margin-right:20px;
+    padding:0 23px 0 0;
+    font-size:24px;
+    font-weight:500;
+    vertical-align:top;
+    line-height:49px;
+    border-right: 1px solid rgba(0, 0, 0, .3);
+}
+h2 {
+    font-size:14px;
+    font-weight:normal;
+    line-height:49px;
+    margin:0;
+    padding:0;
+}
+@media only screen and (max-width: 820px) {
+    header {
+        display: flex;
+    }
+    header a {
+        width: inherit;
+    }
+    h1{
+        font-size:36px;
+    }
+    h2 {
+        font-size:24px;
+    }
+}
+{{end}}

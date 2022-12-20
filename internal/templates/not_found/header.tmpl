@@ -1,0 +1,19 @@
+{{define "header" -}}
+    <header>
+        {{template "hamburger" .}}
+        <a class="home" href="/">
+            <div class="svg">
+               {{template "logo" .}}
+            </div>
+        </a>
+        <nav id="home-nav">
+            <ul>
+                <li>
+                    <a href="/docs">Все документы</a></li>
+                <li>
+                    <a href="#">Читалка</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+{{end}}

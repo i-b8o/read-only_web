@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-type Regulation struct {
+type Doc struct {
 	Id           uint64        `json:"id,omitempty"`
 	Pseudo       string        `json:"r_pseudo,omitempty"`
 	Name         string        `json:"name"`
@@ -16,7 +16,7 @@ type Regulation struct {
 	Chapters     []ChapterInfo `json:"chapters"`
 }
 
-func (r Regulation) IsEmpty() bool {
+func (r Doc) IsEmpty() bool {
 	if (r.Name == "") && (r.Abbreviation == "") && len(r.Chapters) == 0 {
 		return true
 	}

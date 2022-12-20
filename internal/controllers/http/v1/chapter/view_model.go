@@ -7,7 +7,7 @@ import (
 )
 
 type ChapterUsecase interface {
-	GetChapter(ctx context.Context, chapterID string) (entity.Regulation, entity.Chapter)
+	GetChapter(ctx context.Context, chapterID string) (entity.Doc, entity.Chapter)
 }
 
 type paragraph struct {
@@ -20,7 +20,7 @@ type paragraph struct {
 }
 
 type viewModelState struct {
-	// regulations  []entity.Regulation
+	// docs  []entity.Doc
 	ChapterID    uint64
 	Name         string
 	Abbreviation string
@@ -45,18 +45,18 @@ func NewViewModel(chapterUsecase ChapterUsecase) *viewModel {
 }
 
 func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
-	regulation, chapter := vm.chapterUsecase.GetChapter(ctx, id)
-	if regulation.IsEmpty() || chapter.IsEmpty() {
+	doc, chapter := vm.chapterUsecase.GetChapter(ctx, id)
+	if doc.IsEmpty() || chapter.IsEmpty() {
 		return nil
 	}
 	var prevChapter, nextChapter entity.ChapterInfo
 
 	// the chapter order num starts from 1 (not 0)
 	if chapter.OrderNum > 1 {
-		prevChapter = regulation.Chapters[chapter.OrderNum-2]
+		prevChapter = doc.Chapters[chapter.OrderNum-2]
 	}
-	if int(chapter.OrderNum) < len(regulation.Chapters) {
-		nextChapter = regulation.Chapters[chapter.OrderNum]
+	if int(chapter.OrderNum) < len(doc.Chapters) {
+		nextChapter = doc.Chapters[chapter.OrderNum]
 	}
 
 	var paragraphs []paragraph
@@ -67,11 +67,11 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 
 	s := viewModelState{
 		ChapterID:    chapter.ID,
-		Abbreviation: regulation.Abbreviation,
+		Abbreviation: doc.Abbreviation,
 		Title:        &chapter.Name,
 		Name:         chapter.Name,
 		Num:          chapter.Num,
-		Chapters:     regulation.Chapters,
+		Chapters:     doc.Chapters,
 		Prev:         prevChapter,
 		Next:         nextChapter,
 		Paragraphs:   paragraphs,

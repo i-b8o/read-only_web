@@ -215,7 +215,7 @@ function searchRender(json, n){
             href = '';
             aClass = '';
             text = json[i].text.replace(/<\/?[^>]+(>|$)/g, "");
-            // a regulation as the search result
+            // a doc as the search result
             if(json[i].r_id){
                 aClass = "reg";
                 href="/doc/" + json[i].r_id;

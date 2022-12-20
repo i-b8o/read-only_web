@@ -7,7 +7,7 @@ import (
 
 type ChapterStorage interface {
 	Get(ctx context.Context, chapterID uint64) (entity.Chapter, error)
-	GetAll(ctx context.Context, regulationID uint64) ([]entity.ChapterInfo, error)
+	GetAll(ctx context.Context, docID uint64) ([]entity.ChapterInfo, error)
 }
 type chapterService struct {
 	storage ChapterStorage
@@ -20,6 +20,6 @@ func NewChapterService(storage ChapterStorage) *chapterService {
 func (s *chapterService) GetOneChapter(ctx context.Context, chapterID uint64) (entity.Chapter, error) {
 	return s.storage.Get(ctx, chapterID)
 }
-func (s *chapterService) GetAllChapters(ctx context.Context, regulationID uint64) ([]entity.ChapterInfo, error) {
-	return s.storage.GetAll(ctx, regulationID)
+func (s *chapterService) GetAllChapters(ctx context.Context, docID uint64) ([]entity.ChapterInfo, error) {
+	return s.storage.GetAll(ctx, docID)
 }

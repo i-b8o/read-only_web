@@ -12,14 +12,15 @@ import (
 	"time"
 
 	chapter_provider "read-only_web/internal/data_providers/db/postgresql/chapter"
+	doc_provider "read-only_web/internal/data_providers/db/postgresql/doc"
 	paragraph_provider "read-only_web/internal/data_providers/db/postgresql/paragraph"
-	regulation_provider "read-only_web/internal/data_providers/db/postgresql/regulation"
 
 	usecase_chapter "read-only_web/internal/domain/usecase/chapter"
-	usecase_regulation "read-only_web/internal/domain/usecase/regulation"
+	usecase_doc "read-only_web/internal/domain/usecase/doc"
 
 	chapter_controller "read-only_web/internal/controllers/http/v1/chapter"
-	regulation_controller "read-only_web/internal/controllers/http/v1/regulation"
+	doc_controller "read-only_web/internal/controllers/http/v1/doc"
+	not_found_controller "read-only_web/internal/controllers/http/v1/not_found"
 
 	"read-only_web/internal/config"
 	templateManager "read-only_web/internal/templmanager"
@@ -70,24 +71,26 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 		logger.Fatal(err)
 	}
 
-	regulationProvider := regulation_provider.NewRegulationStorage(pgClient)
+	docProvider := doc_provider.NewDocStorage(pgClient)
 	chapterProvider := chapter_provider.NewChapterStorage(pgClient)
 	paragraphProvider := paragraph_provider.NewParagraphStorage(pgClient)
 
-	regulationService := service.NewRegulationService(regulationProvider)
+	docService := service.NewDocService(docProvider)
 	chapterService := service.NewChapterService(chapterProvider)
 	paragraphService := service.NewParagraphService(paragraphProvider)
 
-	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, regulationService, logger)
-	regulationUsecase := usecase_regulation.NewRegulationUsecase(regulationService, chapterService, logger)
+	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, docService, logger)
+	docUsecase := usecase_doc.NewDocUsecase(docService, chapterService, logger)
 
-	regulationViewModel := regulation_controller.NewViewModel(regulationUsecase)
+	docViewModel := doc_controller.NewViewModel(docUsecase)
 	chapterViewModel := chapter_controller.NewViewModel(chapterUsecase)
 	chapterHandler := chapter_controller.NewChapterHandler(chapterViewModel, templateManager)
-	regulationHandler := regulation_controller.NewRegulationHandler(regulationViewModel, templateManager)
+	docHandler := doc_controller.NewDocHandler(docViewModel, templateManager)
+	notFoundController := not_found_controller.NewNotFoundHandler(templateManager)
 
-	regulationHandler.Register(router)
+	docHandler.Register(router)
 	chapterHandler.Register(router)
+	notFoundController.Register(router)
 
 	return App{cfg: config, router: router, logger: logger}, nil
 }

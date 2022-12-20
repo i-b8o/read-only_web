@@ -11,61 +11,61 @@ import (
 
 type ChapterService interface {
 	GetOneChapter(ctx context.Context, chapterID uint64) (entity.Chapter, error)
-	GetAllChapters(ctx context.Context, regulationID uint64) ([]entity.ChapterInfo, error)
+	GetAllChapters(ctx context.Context, docID uint64) ([]entity.ChapterInfo, error)
 }
 
 type ParagraphService interface {
 	GetAll(ctx context.Context, chapterID uint64) ([]entity.Paragraph, error)
 }
 
-type RegulationService interface {
-	GetOne(ctx context.Context, regulationID uint64) (entity.Regulation, error)
+type DocService interface {
+	GetOne(ctx context.Context, docID uint64) (entity.Doc, error)
 }
 
 type chapterUsecase struct {
-	chapterService    ChapterService
-	paragraphService  ParagraphService
-	regulationService RegulationService
-	logger            logging.Logger
+	chapterService   ChapterService
+	paragraphService ParagraphService
+	docService       DocService
+	logger           logging.Logger
 }
 
-func NewChapterUsecase(chapterService ChapterService, paragraphService ParagraphService, regulationService RegulationService, logger logging.Logger) *chapterUsecase {
-	return &chapterUsecase{chapterService: chapterService, paragraphService: paragraphService, regulationService: regulationService, logger: logger}
+func NewChapterUsecase(chapterService ChapterService, paragraphService ParagraphService, docService DocService, logger logging.Logger) *chapterUsecase {
+	return &chapterUsecase{chapterService: chapterService, paragraphService: paragraphService, docService: docService, logger: logger}
 }
 
 // TODO do not send an error when a chapter does not exist
-func (u chapterUsecase) GetChapter(ctx context.Context, chapterID string) (entity.Regulation, entity.Chapter) {
+func (u chapterUsecase) GetChapter(ctx context.Context, chapterID string) (entity.Doc, entity.Chapter) {
 	uint64ID, err := strconv.ParseUint(chapterID, 10, 64)
 	if err != nil {
 		u.logger.Error(err)
-		return entity.Regulation{}, entity.Chapter{}
+		return entity.Doc{}, entity.Chapter{}
 	}
 
 	chapter, err := u.chapterService.GetOneChapter(ctx, uint64ID)
 	if err != nil {
 		fmt.Println("chapter")
 		u.logger.Error(err)
-		return entity.Regulation{}, entity.Chapter{}
+		return entity.Doc{}, entity.Chapter{}
 	}
 
 	chapter.Paragraphs, err = u.paragraphService.GetAll(ctx, uint64ID)
 	if err != nil {
 		fmt.Println("paragraphs")
 		u.logger.Error(err)
-		return entity.Regulation{}, entity.Chapter{}
+		return entity.Doc{}, entity.Chapter{}
 	}
-	regulation, err := u.regulationService.GetOne(ctx, chapter.RegulationID)
+	doc, err := u.docService.GetOne(ctx, chapter.DocID)
 	if err != nil {
-		fmt.Println("regulation")
+		fmt.Println("doc")
 		u.logger.Error(err)
-		return entity.Regulation{}, entity.Chapter{}
+		return entity.Doc{}, entity.Chapter{}
 	}
-	chapters, err := u.chapterService.GetAllChapters(ctx, chapter.RegulationID)
+	chapters, err := u.chapterService.GetAllChapters(ctx, chapter.DocID)
 	if err != nil {
 		fmt.Println("chapters")
 		u.logger.Error(err)
-		return entity.Regulation{}, entity.Chapter{}
+		return entity.Doc{}, entity.Chapter{}
 	}
-	regulation.Chapters = chapters
-	return regulation, chapter
+	doc.Chapters = chapters
+	return doc, chapter
 }
