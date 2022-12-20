@@ -1,6 +1,5 @@
 package main
 
-// TODO 404 page
 // TODO SWAGGER
 
 import (

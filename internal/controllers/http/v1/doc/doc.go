@@ -1,3 +1,5 @@
+// TODO add everywhere title, meta keywords
+// TODO make smaller 404`s h1 and h2 font-sizes in the mobile version
 package doc_controller
 
 import (

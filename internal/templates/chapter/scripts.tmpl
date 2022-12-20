@@ -3,13 +3,6 @@
 {{template "search_open_close" .}}
 {{template "search_handler" .}}
 <script>
-addEventListener("scroll", (event) => {
-    console.log("AAA")
-    document.getElementsByTagName("header")[0].style.position = "fixed";
-    document.getElementsByTagName("header")[0].style.position = "sticky";
-});
-</script>
-<script>
     //Lift up an aside active link
     var aside = document.getElementsByTagName("aside")[0];
     var active_link = document.getElementById('active-link');
