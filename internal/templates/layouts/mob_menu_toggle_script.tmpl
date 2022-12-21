@@ -18,6 +18,12 @@
             }
         }
         menu.classList.toggle('active');
+        //Lift up an nav active link
+        var nav = document.getElementsByTagName("nav")[0];
+        var active_link = document.getElementById('active-link');
+        var topPos = active_link.offsetTop;
+        console.log(topPos);
+        nav.scrollTop = topPos;
     }
     
     let hamburger = document.getElementById('hamburger');
