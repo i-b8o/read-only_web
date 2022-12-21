@@ -3,11 +3,11 @@
 {{template "search_open_close" .}}
 {{template "search_handler" .}}
 <script>
-    //Lift up an aside active link
-    var aside = document.getElementsByTagName("aside")[0];
+    //Lift up an nav active link
+    var nav = document.getElementsByTagName("nav")[0];
     var active_link = document.getElementById('active-link');
     var topPos = active_link.offsetTop;
-    aside.scrollTop = topPos - 70;
+    nav.scrollTop = topPos - 70;
 </script>
 <script>
     // Remove an inline style width for a table if the width more than the viewport
