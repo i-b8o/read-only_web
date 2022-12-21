@@ -1,5 +1,3 @@
-// TODO add everywhere title, description keywords
-
 package doc_controller
 
 import (

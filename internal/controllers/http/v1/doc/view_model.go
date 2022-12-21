@@ -13,9 +13,9 @@ type DocUsecase interface {
 type viewModelState struct {
 	Abbreviation string
 	Header       *string
-	Title        *string
-	Description  *string
-	Keywords     *string
+	Title        string
+	Description  string
+	Keywords     string
 	Name         string
 	Chapters     []entity.ChapterInfo
 }
@@ -42,7 +42,7 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 	s := viewModelState{
 		Abbreviation: doc.Abbreviation,
 		Header:       doc.Header,
-		Title:        &doc.Name,
+		Title:        doc.Name,
 		Description:  doc.Description,
 		Keywords:     doc.Keywords,
 		Name:         doc.Name,

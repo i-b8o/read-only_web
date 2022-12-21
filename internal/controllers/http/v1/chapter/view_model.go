@@ -26,9 +26,9 @@ type viewModelState struct {
 	Name         string
 	Abbreviation string
 	// header       *string
-	Title       *string
-	Description *string
-	Keywords    *string
+	Title       string
+	Description string
+	Keywords    string
 	Prev        entity.ChapterInfo
 	Next        entity.ChapterInfo
 	Num         string
