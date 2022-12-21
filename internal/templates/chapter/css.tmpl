@@ -1,8 +1,32 @@
 {{define "css" -}}
+nav {
+    overflow-y: scroll;
+}
 @media only screen and (min-width: 821px) {
     main {
         padding-top: 70px;
         overflow-y: scroll;
+    }
+    nav::-webkit-scrollbar {
+        width: 12px;
+    }
+    nav::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+    }
+    nav::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        background: #f2f4f6; 
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+        height:50px;
+    }
+    nav::-webkit-scrollbar-thumb:window-inactive {
+        background: #f2f4f6;
+    }
+    nav {
+            height: calc(100vh - 70px);
     }
 }
 {{end}}
