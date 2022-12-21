@@ -9,7 +9,7 @@ type Doc struct {
 	Abbreviation string        `json:"abbreviation"`
 	Header       *string       `json:"header"`
 	Title        *string       `json:"title"`
-	Meta         *string       `json:"meta"`
+	Description  *string       `json:"description"`
 	Keywords     *string       `json:"key_words"`
 	CreatedAt    time.Time     `json:"created_at,omitempty"`
 	UpdatedAt    *time.Time    `json:"updated_at,omitempty"`

@@ -4,6 +4,7 @@ import (
 	"context"
 	"html/template"
 	"read-only_web/internal/domain/entity"
+	"strconv"
 )
 
 type ChapterUsecase interface {
@@ -25,15 +26,15 @@ type viewModelState struct {
 	Name         string
 	Abbreviation string
 	// header       *string
-	Title *string
-	// meta         *string
-	// keywords     *string
-	Prev       entity.ChapterInfo
-	Next       entity.ChapterInfo
-	Num        string
-	Paragraphs []paragraph
-	Chapters   []entity.ChapterInfo
-	Updated    string
+	Title       *string
+	Description *string
+	Keywords    *string
+	Prev        entity.ChapterInfo
+	Next        entity.ChapterInfo
+	Num         string
+	Paragraphs  []paragraph
+	Chapters    []entity.ChapterInfo
+	Updated     string
 }
 
 type viewModel struct {
@@ -45,6 +46,12 @@ func NewViewModel(chapterUsecase ChapterUsecase) *viewModel {
 }
 
 func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
+	// validate id is a positive num
+	n, err := strconv.ParseFloat(id, 64)
+	if err != nil || n <= 0 {
+		return nil
+	}
+
 	doc, chapter := vm.chapterUsecase.GetChapter(ctx, id)
 	if doc == nil || chapter == nil {
 		return nil
@@ -68,7 +75,9 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 	s := viewModelState{
 		ChapterID:    chapter.ID,
 		Abbreviation: doc.Abbreviation,
-		Title:        &chapter.Name,
+		Title:        chapter.Title,
+		Description:  chapter.Description,
+		Keywords:     chapter.Keywords,
 		Name:         chapter.Name,
 		Num:          chapter.Num,
 		Chapters:     doc.Chapters,

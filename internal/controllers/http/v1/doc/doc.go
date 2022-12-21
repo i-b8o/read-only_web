@@ -1,5 +1,5 @@
-// TODO add everywhere title, meta keywords
-// TODO make smaller 404`s h1 and h2 font-sizes in the mobile version
+// TODO add everywhere title, description keywords
+
 package doc_controller
 
 import (
@@ -37,8 +37,7 @@ func (h *docHandler) Home(w http.ResponseWriter, r *http.Request, params httprou
 }
 
 func (h *docHandler) DocumentRoot(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	// TODO validation 
-        state := h.vm.GetState(r.Context(), params.ByName("id"))
+	state := h.vm.GetState(r.Context(), params.ByName("id"))
 	if state == nil {
 		http.Redirect(w, r, "/404", http.StatusSeeOther)
 		return
