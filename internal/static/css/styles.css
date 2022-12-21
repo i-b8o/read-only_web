@@ -409,6 +409,7 @@ color: #56c1f2;;
     section {
         padding-top: 30px;
         padding-left: 50px;
+        padding-right: 80px;
         height: calc(100vh - 100px);
         overflow-y: scroll;
     }
@@ -499,7 +500,7 @@ color: #56c1f2;;
 
     .btns-wrapper {
         margin-top: 80px;
-        margin-bottom: 120px
+        margin-bottom: 40px
     }
 
     .btn {
@@ -666,7 +667,7 @@ color: #56c1f2;;
         position: fixed;
         align-items: center;
         height: 70px;
-        width: 100vw;
+        width: 100%;
         justify-content: space-between;
     }
 

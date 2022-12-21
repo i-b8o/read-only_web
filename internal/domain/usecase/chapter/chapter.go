@@ -32,7 +32,6 @@ func NewChapterUsecase(chapterService ChapterService, paragraphService Paragraph
 	return &chapterUsecase{chapterService: chapterService, paragraphService: paragraphService, docService: docService, logger: logger}
 }
 
-// TODO chapter`s footer
 func (u chapterUsecase) GetChapter(ctx context.Context, chapterID string) (*entity.Doc, *entity.Chapter) {
 	uint64ID, err := strconv.ParseUint(chapterID, 10, 64)
 	if err != nil {
