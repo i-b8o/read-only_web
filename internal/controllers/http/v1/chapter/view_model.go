@@ -28,7 +28,6 @@ type viewModelState struct {
 	// header       *string
 	Title       string
 	Description string
-	Keywords    string
 	Prev        entity.ChapterInfo
 	Next        entity.ChapterInfo
 	Num         string
@@ -77,7 +76,6 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 		Abbreviation: doc.Abbreviation,
 		Title:        chapter.Title,
 		Description:  chapter.Description,
-		Keywords:     chapter.Keywords,
 		Name:         chapter.Name,
 		Num:          chapter.Num,
 		Chapters:     doc.Chapters,

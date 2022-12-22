@@ -10,7 +10,6 @@ type Doc struct {
 	Header       *string       `json:"header"`
 	Title        string        `json:"title"`
 	Description  string        `json:"description"`
-	Keywords     string        `json:"key_words"`
 	CreatedAt    time.Time     `json:"created_at,omitempty"`
 	UpdatedAt    *time.Time    `json:"updated_at,omitempty"`
 	Chapters     []ChapterInfo `json:"chapters"`

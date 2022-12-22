@@ -11,7 +11,6 @@ type Chapter struct {
 	Header      *string     `json:"header"`
 	Title       string      `json:"title"`
 	Description string      `json:"description"`
-	Keywords    string      `json:"key_words"`
 	Paragraphs  []Paragraph `json:"paragraphs,omitempty"`
 	UpdatedAt   *time.Time  `json:"updated_at,omitempty"`
 }

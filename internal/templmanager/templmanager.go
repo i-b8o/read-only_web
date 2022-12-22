@@ -2,12 +2,11 @@ package templmanager
 
 import (
 	"context"
+	"errors"
 	"html/template"
 	"net/http"
 	"os"
 	"path/filepath"
-// TODO make interface 
-	"github.com/i-b8o/logging"
 )
 
 var templates map[string]*template.Template
@@ -18,16 +17,16 @@ type TemplateConfig struct {
 
 type TemplateManager struct {
 	templatePath string
+	mainTemplate string
 }
 
-func NewTemplateManager(templatePath string) TemplateManager {
-	return TemplateManager{templatePath: templatePath}
+func NewTemplateManager(templatePath, mainTemplate string) TemplateManager {
+	return TemplateManager{templatePath: templatePath, mainTemplate: mainTemplate}
 }
 
-func (tm TemplateManager) LoadTemplates(ctx context.Context, logger logging.Logger) (err error) {
+func (tm TemplateManager) LoadTemplates(ctx context.Context) (err error) {
 	if tm.templatePath == "nil" {
-		logger.Errorf("TemplateConfig not initialized")
-		return err
+		return errors.New("TemplateConfig not initialized")
 	}
 	if templates == nil {
 		templates = make(map[string]*template.Template)
@@ -35,17 +34,15 @@ func (tm TemplateManager) LoadTemplates(ctx context.Context, logger logging.Logg
 
 	mainTemplate := template.New("main")
 
-	mainTemplate, err = mainTemplate.Parse(mainTmpl)
+	mainTemplate, err = mainTemplate.Parse(tm.mainTemplate)
 	if err != nil {
-		logger.Errorf(err.Error())
+		return err
 	}
 
 	curdir, _ := os.Getwd()
-	logger.Infof("current directory: %s\n", curdir)
-	logger.Infof("template path: %s\n", tm.templatePath)
 	folders, err := OSReadDir(curdir + tm.templatePath)
 	if err != nil {
-		logger.Fatal(err)
+		return err
 	}
 
 	layoutFiles, err := filepath.Glob(curdir + tm.templatePath + "/layouts/*.tmpl")
@@ -59,7 +56,7 @@ func (tm TemplateManager) LoadTemplates(ctx context.Context, logger logging.Logg
 		}
 		includeFiles, err := filepath.Glob(curdir + tm.templatePath + folder + "/*.tmpl")
 		if err != nil {
-			logger.Fatal(err)
+			return err
 		}
 		folderName := filepath.Base(folder)
 		templates[folderName], err = mainTemplate.Clone()
@@ -67,10 +64,8 @@ func (tm TemplateManager) LoadTemplates(ctx context.Context, logger logging.Logg
 			return err
 		}
 		includeFiles = append(includeFiles, layoutFiles...)
-		logger.Infof("path: %s\n", folderName)
 		templates[folderName] = template.Must(templates[folderName].ParseFiles(includeFiles...))
 	}
-	logger.Info("templates loaded successfully")
 	return nil
 }
 

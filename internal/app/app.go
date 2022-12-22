@@ -65,8 +65,8 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	}
 
 	logger.Print("loading templates")
-	templateManager := templateManager.NewTemplateManager(config.Template.Path)
-	templateManager.LoadTemplates(ctx, logger)
+	templateManager := templateManager.NewTemplateManager(config.Template.Path, config.Template.MainTemplate)
+	err = templateManager.LoadTemplates(ctx)
 	if err != nil {
 		logger.Fatal(err)
 	}
