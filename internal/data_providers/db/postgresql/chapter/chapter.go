@@ -18,10 +18,20 @@ func NewChapterStorage(client client.PostgreSQLClient) *chapterStorage {
 
 // Get returns an chapter associated with the given ID
 func (cs *chapterStorage) Get(ctx context.Context, chapterID uint64) (entity.Chapter, error) {
-	const sql = `SELECT id,name,num,order_num,doc_id,updated_at FROM "chapter" WHERE id = $1 ORDER BY order_num`
+	const sql = `SELECT id,name,num,order_num,doc_id, title, description, keywords,updated_at FROM "chapter" WHERE id = $1 ORDER BY order_num`
 	row := cs.client.QueryRow(ctx, sql, chapterID)
 	chapter := entity.Chapter{}
-	err := row.Scan(&chapter.ID, &chapter.Name, &chapter.Num, &chapter.OrderNum, &chapter.DocID, &chapter.UpdatedAt)
+	err := row.Scan(
+		&chapter.ID,
+		&chapter.Name,
+		&chapter.Num,
+		&chapter.OrderNum,
+		&chapter.DocID,
+		&chapter.Title,
+		&chapter.Description,
+		&chapter.Keywords,
+		&chapter.UpdatedAt,
+	)
 	if err != nil {
 		return chapter, err
 	}

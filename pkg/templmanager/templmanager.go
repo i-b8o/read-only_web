@@ -17,12 +17,32 @@ type TemplateConfig struct {
 
 type TemplateManager struct {
 	templatePath string
-	mainTemplate string
 }
 
-func NewTemplateManager(templatePath, mainTemplate string) TemplateManager {
-	return TemplateManager{templatePath: templatePath, mainTemplate: mainTemplate}
+func NewTemplateManager(templatePath string) TemplateManager {
+	return TemplateManager{templatePath: templatePath}
 }
+
+const mainTmpl = `
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Type" content="type; charset= "/>
+        <meta name="description" content="{{.Description}}"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta charset="windows-1251">
+        <title>{{.Title}}</title>
+        <link rel="stylesheet" href="/static/css/styles.css">
+        <style>
+            {{template "css" .}}
+        </style>
+    </head>
+    <body>
+       {{template "body" .}}
+     </body>
+</html>
+`
 
 func (tm TemplateManager) LoadTemplates(ctx context.Context) (err error) {
 	if tm.templatePath == "nil" {
@@ -34,7 +54,7 @@ func (tm TemplateManager) LoadTemplates(ctx context.Context) (err error) {
 
 	mainTemplate := template.New("main")
 
-	mainTemplate, err = mainTemplate.Parse(tm.mainTemplate)
+	mainTemplate, err = mainTemplate.Parse(mainTmpl)
 	if err != nil {
 		return err
 	}

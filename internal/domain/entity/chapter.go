@@ -8,7 +8,6 @@ type Chapter struct {
 	Num         string      `json:"num,omitempty"`
 	DocID       uint64      `json:"doc_id,omitempty"`
 	OrderNum    uint32      `json:"order_num"`
-	Header      *string     `json:"header"`
 	Title       string      `json:"title"`
 	Description string      `json:"description"`
 	Keywords    string      `json:"keywords"`

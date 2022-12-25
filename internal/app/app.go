@@ -23,7 +23,7 @@ import (
 	not_found_controller "read-only_web/internal/controllers/http/v1/not_found"
 
 	"read-only_web/internal/config"
-	templateManager "read-only_web/internal/templmanager"
+	templateManager "read-only_web/pkg/templmanager"
 
 	"github.com/i-b8o/logging"
 	"github.com/julienschmidt/httprouter"
@@ -65,7 +65,7 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	}
 
 	logger.Print("loading templates")
-	templateManager := templateManager.NewTemplateManager(config.Template.Path, config.Template.MainTemplate)
+	templateManager := templateManager.NewTemplateManager(config.Template.Path)
 	err = templateManager.LoadTemplates(ctx)
 	if err != nil {
 		logger.Fatal(err)
@@ -114,7 +114,7 @@ func (a *App) startHTTP(ctx context.Context) error {
 	// Define the listener (Unix or TCP)
 	// var listener net.Listener
 
-	a.logger.Infof("bind application to host: %s and port: %s", a.cfg.HTTP.IP, a.cfg.HTTP.Port)
+	a.logger.Infof("bind application to host: %s and port: %d", a.cfg.HTTP.IP, a.cfg.HTTP.Port)
 	var err error
 	// start up a tcp listener
 	// listener, err = net.Listen("tcp", fmt.Sprintf("%s:%d", a.cfg.HTTP.IP, a.cfg.HTTP.Port))

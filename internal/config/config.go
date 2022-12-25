@@ -28,8 +28,7 @@ type Config struct {
 		LogLevel string `yaml:"log-level" env:"LOG_LEVEL" env-default:"trace"`
 	} `yaml:"app"`
 	Template struct {
-		Path         string `yaml:"path" env:"TEMPLATEPATH"`
-		MainTemplate string
+		Path string `yaml:"path" env:"TEMPLATEPATH"`
 	} `yaml:"template"`
 	Certs struct {
 		Path string `yaml:"path"`
@@ -69,7 +68,6 @@ func GetConfig() *Config {
 		}
 
 		instance = &Config{}
-		instance.Template.MainTemplate = mainTmpl
 		if err := cleanenv.ReadConfig(configPath, instance); err != nil {
 			helpText := "Read Only"
 			help, _ := cleanenv.GetDescription(instance, &helpText)

@@ -2,7 +2,7 @@ package doc_controller
 
 import (
 	"net/http"
-	templateManager "read-only_web/internal/templmanager"
+	templateManager "read-only_web/pkg/templmanager"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -31,7 +31,8 @@ func (h *docHandler) Register(router *httprouter.Router) {
 }
 
 func (h *docHandler) Home(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	h.templateManager.RenderTemplate(w, "home", nil)
+	state := h.vm.GetDefaultState()
+	h.templateManager.RenderTemplate(w, "home", state)
 }
 
 func (h *docHandler) DocumentRoot(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

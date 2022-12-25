@@ -2,7 +2,7 @@ package chapter_controller
 
 import (
 	"net/http"
-	templateManager "read-only_web/internal/templmanager"
+	templateManager "read-only_web/pkg/templmanager"
 
 	"github.com/julienschmidt/httprouter"
 )

@@ -12,9 +12,9 @@ type DocUsecase interface {
 
 type viewModelState struct {
 	Abbreviation string
-	Header       *string
 	Title        string
 	Description  string
+	Keywords     string
 	Name         string
 	Chapters     []entity.ChapterInfo
 }
@@ -39,12 +39,20 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 		return nil
 	}
 	s := viewModelState{
-		Abbreviation: doc.Abbreviation,
-		Header:       doc.Header,
-		Title:        doc.Name,
-		Description:  doc.Description,
-		Name:         doc.Name,
-		Chapters:     doc.Chapters,
+		Title:       doc.Name,
+		Description: doc.Description,
+		Keywords:    doc.Keywords,
+		Name:        doc.Name,
+		Chapters:    doc.Chapters,
+	}
+	return &s
+}
+
+func (vm viewModel) GetDefaultState() *viewModelState {
+	s := viewModelState{
+		Title:       "Главная",
+		Description: "Законодательство - законы и кодексы Российской Федерации. Полные тексты документов в последней редакции.",
+		Keywords:    "Законодательство, законы, кодексы, федеральные законы, документы, Россия, РФ, налогообложение, налоги, трудовое, семейное, налоговое, административное, право,",
 	}
 	return &s
 }
