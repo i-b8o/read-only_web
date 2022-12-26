@@ -11,12 +11,11 @@ type DocUsecase interface {
 }
 
 type viewModelState struct {
-	Abbreviation string
-	Title        string
-	Description  string
-	Keywords     string
-	Name         string
-	Chapters     []entity.ChapterInfo
+	Title       string
+	Description string
+	Keywords    string
+	Name        string
+	Chapters    []entity.ChapterInfo
 }
 
 type viewModel struct {

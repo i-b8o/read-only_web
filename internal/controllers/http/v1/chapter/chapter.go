@@ -32,3 +32,5 @@ func (h *chapterHandler) GetChapter(w http.ResponseWriter, r *http.Request, para
 	}
 	h.templateManager.RenderTemplate(w, "chapter", state)
 }
+
+// TODO div => p

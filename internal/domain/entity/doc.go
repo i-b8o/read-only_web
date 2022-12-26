@@ -4,7 +4,9 @@ import "time"
 
 type Doc struct {
 	Id          uint64        `json:"id,omitempty"`
-	Pseudo      string        `json:"r_pseudo,omitempty"`
+	Type        string        `json:"type,omitempty"`
+	Subtype     string        `json:"subtype,omitempty"`
+	Rev         string        `json:"rev,omitempty"`
 	Name        string        `json:"name"`
 	Title       string        `json:"title"`
 	Keywords    string        `json:"keywords"`
@@ -13,3 +15,6 @@ type Doc struct {
 	UpdatedAt   *time.Time    `json:"updated_at,omitempty"`
 	Chapters    []ChapterInfo `json:"chapters"`
 }
+
+// TODO Add all docs page
+// TODO Add rev section in templates
