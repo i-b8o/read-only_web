@@ -72,3 +72,8 @@ main > a:nth-child(15) > div.doc{
     top: 70vh;
     left: 93vw;
 }
+
+main > a:nth-child(15) > div.doc{
+    top: 35vh;
+    left: 83vw;
+}

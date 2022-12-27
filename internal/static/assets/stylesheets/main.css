@@ -88,7 +88,7 @@ main {
 .headers {
     position: fixed;
     opacity: 1;
-    top: 150vh;
+    top: 180vh;
     left: 50vw;
     width: 25vw;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -118,6 +118,7 @@ main {
     left: 20vw;
     font-weight: bold;
     font-size: 2vw;
+    top: 152vh;
 }
 
 #download-links {
@@ -132,6 +133,7 @@ main {
     height: 17vh;
     border: 1px solid #688a73;
     border-radius: 15px;
+    top: 152vh;
 }
 
 .markets {
@@ -200,7 +202,7 @@ main {
 }
 
 
-@media only screen and (max-width: 1250px) {
+@media only screen and (max-width: 821px) {
     .div-h2>h2 {
         font-size: 5vw;
     }

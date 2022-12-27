@@ -28,8 +28,8 @@ header {
 }
 
 .logo>svg {
-    width: 1vw;
-    height: 1vw;
+    width: 2vw;
+    height: 2vw;
     margin-right: 0.5vw;
     border-radius: 10px;
     padding: 0.5vw;
@@ -118,7 +118,7 @@ nav img {
     border-left: 2px solid #f3f2f3;
 }
 
-@media only screen and (max-width: 1250px) {
+@media only screen and (max-width: 821px) {
     header {
         justify-content: center;
     }
