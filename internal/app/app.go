@@ -14,13 +14,18 @@ import (
 	chapter_provider "read-only_web/internal/data_providers/db/postgresql/chapter"
 	doc_provider "read-only_web/internal/data_providers/db/postgresql/doc"
 	paragraph_provider "read-only_web/internal/data_providers/db/postgresql/paragraph"
+	sub_type_provider "read-only_web/internal/data_providers/db/postgresql/sub_type"
+	type_provider "read-only_web/internal/data_providers/db/postgresql/type"
 
+	usecase_all_doc_types "read-only_web/internal/domain/usecase/all_doc_types"
 	usecase_chapter "read-only_web/internal/domain/usecase/chapter"
 	usecase_doc "read-only_web/internal/domain/usecase/doc"
 
+	all_doc_types_controller "read-only_web/internal/controllers/http/v1/all_doc_types"
 	chapter_controller "read-only_web/internal/controllers/http/v1/chapter"
 	doc_controller "read-only_web/internal/controllers/http/v1/doc"
 	not_found_controller "read-only_web/internal/controllers/http/v1/not_found"
+	subtypes_controller "read-only_web/internal/controllers/http/v1/sub_types"
 
 	"read-only_web/internal/config"
 	templateManager "read-only_web/pkg/templmanager"
@@ -70,24 +75,35 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	if err != nil {
 		logger.Fatal(err)
 	}
-
+	typeProvider := type_provider.NewTypeStorage(pgClient)
+	subTypeProvider := sub_type_provider.NewSubTypeStorage(pgClient)
 	docProvider := doc_provider.NewDocStorage(pgClient)
 	chapterProvider := chapter_provider.NewChapterStorage(pgClient)
 	paragraphProvider := paragraph_provider.NewParagraphStorage(pgClient)
 
-	docService := service.NewDocService(docProvider)
-	chapterService := service.NewChapterService(chapterProvider)
-	paragraphService := service.NewParagraphService(paragraphProvider)
+	typeService := service.NewTypeService(typeProvider, logger)
+	subTypeService := service.NewSubTypeService(subTypeProvider, logger)
+	docService := service.NewDocService(docProvider, logger)
+	chapterService := service.NewChapterService(chapterProvider, logger)
+	paragraphService := service.NewParagraphService(paragraphProvider, logger)
 
+	allDocTypesUsecase := usecase_all_doc_types.NewAllTypesUsecase(typeService, subTypeService, logger)
 	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, docService, logger)
 	docUsecase := usecase_doc.NewDocUsecase(docService, chapterService, logger)
 
+	allDocTypesModel := all_doc_types_controller.NewViewModel(allDocTypesUsecase)
+	subtypesModel := subtypes_controller.NewViewModel(allDocTypesUsecase)
 	docViewModel := doc_controller.NewViewModel(docUsecase)
 	chapterViewModel := chapter_controller.NewViewModel(chapterUsecase)
+
+	allDocTypesHandler := all_doc_types_controller.NewAllDocTypesHandler(allDocTypesModel, templateManager)
+	subTypesHandler := subtypes_controller.NewSubTypesHandler(subtypesModel, templateManager)
 	chapterHandler := chapter_controller.NewChapterHandler(chapterViewModel, templateManager)
 	docHandler := doc_controller.NewDocHandler(docViewModel, templateManager)
 	notFoundController := not_found_controller.NewNotFoundHandler(templateManager)
 
+	allDocTypesHandler.Register(router)
+	subTypesHandler.Register(router)
 	docHandler.Register(router)
 	chapterHandler.Register(router)
 	notFoundController.Register(router)

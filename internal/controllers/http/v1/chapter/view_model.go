@@ -8,7 +8,7 @@ import (
 )
 
 type ChapterUsecase interface {
-	GetChapter(ctx context.Context, chapterID string) (*entity.Doc, *entity.Chapter)
+	GetChapter(ctx context.Context, chapterID uint64) (*entity.Doc, *entity.Chapter)
 }
 
 type paragraph struct {
@@ -46,13 +46,13 @@ func NewViewModel(chapterUsecase ChapterUsecase) *viewModel {
 }
 
 func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
-	// validate id is a positive num
-	n, err := strconv.ParseFloat(id, 64)
-	if err != nil || n <= 0 {
+	// type-conversion then validate id is a positive num
+	uint64ID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil || uint64ID <= 0 {
 		return nil
 	}
 
-	doc, chapter := vm.chapterUsecase.GetChapter(ctx, id)
+	doc, chapter := vm.chapterUsecase.GetChapter(ctx, uint64ID)
 	if doc == nil || chapter == nil {
 		return nil
 	}

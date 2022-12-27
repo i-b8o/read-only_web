@@ -1,0 +1,74 @@
+main > a:nth-child(1) > div.doc{
+    top: 58vh;
+    left: 5vw;
+}
+
+main > a:nth-child(2) > div.doc{
+    top: 55vh;
+    left: 17vw;
+}
+
+main > a:nth-child(3) > div.doc{
+    top: 41vh;
+    left: 16vw;
+}
+
+main > a:nth-child(4) > div.doc{
+    top: 77vh;
+    left: 8vw;
+}
+
+main > a:nth-child(5) > div.doc{
+    top: 88vh;
+    left: 16vw;
+}
+
+main > a:nth-child(6) > div.doc{
+    top: 68vh;
+    left: 20vw;
+}
+
+main > a:nth-child(7) > div.doc{
+    top: 50vh;
+    left: 30vw;
+}
+
+main > a:nth-child(8) > div.doc{
+    top: 80vh;
+    left: 25vw;
+}
+
+main > a:nth-child(9) > div.doc{
+    top: 46vh;
+    left: 48vw;
+}
+
+main > a:nth-child(10) > div.doc{
+    top: 50vh;
+    left: 71vw;
+}
+
+main > a:nth-child(11) > div.doc{
+    top: 70vh;
+    left: 71vw;
+}
+
+main > a:nth-child(12) > div.doc{
+    top: 80vh;
+    left: 81vw;
+}
+
+main > a:nth-child(13) > div.doc{
+    top: 63vh;
+    left: 82vw;
+}
+
+main > a:nth-child(14) > div.doc{
+    top: 49vh;
+    left: 91vw;
+}
+
+main > a:nth-child(15) > div.doc{
+    top: 70vh;
+    left: 93vw;
+}

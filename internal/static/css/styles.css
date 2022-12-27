@@ -8,6 +8,10 @@ body {
     color: #4a5660;
 }
 
+main {
+    width: 100%;
+}
+
 main::-webkit-scrollbar {
     display: none;
 }
@@ -433,6 +437,7 @@ color: #56c1f2;;
 
     #search {
         display: flex;
+        align-items: center;
         cursor: pointer;
         color: white;
     }

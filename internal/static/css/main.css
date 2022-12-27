@@ -1,0 +1,231 @@
+main {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.div-h2 {
+    position: relative;
+    top: 22vh;
+    width: 44vw;
+    text-align: center;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+.div-h2>h2 {
+    position: relative;
+    z-index: -1;
+    font-size: 2vw;
+}
+
+#phone-main {
+    position: absolute;
+    top: 56vh;
+    height: 64vh;
+    z-index: 2;
+}
+
+.doc {
+    width: 1.8vw;
+    height: 1.8vw;
+    position: fixed;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.03);
+    transition: transform .2s;
+    border-radius: 5px;
+    overflow: hidden
+
+}
+
+.doc:hover {
+    transform: scale(1.5);
+}
+
+.doc>img {
+    width: 1.9vw;
+    height: 1.9vw;
+}
+
+.docs-left {
+    animation-name: books_to_left;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+    animation-direction: alternate;
+}
+
+@keyframes books_to_left {
+    100% {
+        top: 60vh;
+        left: 30vw;
+        width: .1vw;
+        height: .1vw;
+    }
+}
+
+#circle {
+    top: 70vh;
+    height: 35vw;
+    width: 35vw;
+    background-color: #e2cefa;
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+}
+
+.headers {
+    position: fixed;
+    opacity: 1;
+    top: 150vh;
+    left: 50vw;
+    width: 25vw;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.headers>h1 {
+    color: black;
+    font-weight: bold;
+    font-size: 2vw;
+}
+
+.headers>h1>span {
+    color: #4289e4;
+}
+
+.headers>p {
+    color: #7f7d7f;
+    font-weight: bold;
+    font-size: 0.7vw;
+}
+
+.down {
+    height: 600vh;
+}
+
+#download {
+    left: 20vw;
+    font-weight: bold;
+    font-size: 2vw;
+}
+
+#download-links {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    left: 30vw;
+    width: 40vw;
+    height: 17vh;
+    border: 1px solid #688a73;
+    border-radius: 15px;
+}
+
+.markets {
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 14vw;
+    height: 5vh;
+    border: 1px solid #688a73;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.markets>img {
+    height: 3vh;
+}
+
+.markets>div {
+    font-size: 2vh;
+    margin-right: 4vw;
+}
+
+#qr>img {
+    height: 11vh;
+}
+
+#love {
+    font-size: 0.5vw;
+    left: 92vw;
+}
+
+#love>img {
+    width: 0.5vw;
+}
+
+#first-header {
+    cursor: pointer;
+}
+
+#qrand {
+    position: fixed;
+    right: 1vw;
+    bottom: 1vw;
+    width: 3vw;
+}
+
+#qrand > img {
+    height: 100%; 
+    width: 100%; 
+    object-fit: contain;
+    cursor: -moz-zoom-in; 
+    cursor: -webkit-zoom-in; 
+    cursor: zoom-in;
+}
+
+#qrand.animation {
+    animation: qrand-animation .5s linear forwards;
+}
+
+@keyframes qrand-animation {
+   100% {
+        transform: translate3D(-5vw, -5vw, 0) scale(3);
+   }
+}
+
+
+@media only screen and (max-width: 1250px) {
+    .div-h2>h2 {
+        font-size: 5vw;
+    }
+    .booker {
+        width: 5vw;
+        height: 5vw;
+    }
+    .booker>img {
+        width: 3.2vw;
+        height: 3.2vw;
+    }
+    .headers {
+        width: 50vw;
+        left: 25vw;
+    }
+    .headers>h1 {
+        font-size: 5vw;
+    }
+    .headers>p {
+        font-size: 3vw;
+    }
+    #first-header>h1 {
+        font-size: 3vw;
+    }
+    #first-header>p {
+        font-size: 2vw;
+    }
+}

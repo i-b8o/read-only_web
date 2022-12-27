@@ -1,0 +1,11 @@
+{{define "section" -}}
+<section>
+    <h1>{{.Title}}</h1>
+    <hr color="#e5e7eb" size="1">
+    {{range .DocSubTypes}}
+        <div><a class="table-of-contents" href="/doc/{{.ID}}">{{.Name}}</a></div>
+    {{else}}
+        <div>Такого документа не существует.</div>
+    {{end}}
+</section>
+{{end}}

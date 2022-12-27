@@ -7,7 +7,7 @@ import (
 )
 
 type DocUsecase interface {
-	GetDocumentRoot(ctx context.Context, stringID string) *entity.Doc
+	GetDocumentRoot(ctx context.Context, docID uint64) *entity.Doc
 }
 
 type viewModelState struct {
@@ -27,13 +27,13 @@ func NewViewModel(docUsecase DocUsecase) *viewModel {
 }
 
 func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
-	// validate id is a positive num
-	n, err := strconv.ParseFloat(id, 64)
-	if err != nil || n <= 0 {
+	// type-conversion then validate id is a positive num
+	uint64ID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil || uint64ID <= 0 {
 		return nil
 	}
 
-	doc := vm.docUsecase.GetDocumentRoot(ctx, id)
+	doc := vm.docUsecase.GetDocumentRoot(ctx, uint64ID)
 	if doc == nil {
 		return nil
 	}
