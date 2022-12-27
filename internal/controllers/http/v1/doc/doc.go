@@ -9,7 +9,6 @@ import (
 
 const (
 	home         = "/"
-	reader       = "/reader"
 	documentRoot = "/doc/:id"
 )
 
@@ -29,7 +28,6 @@ func NewDocHandler(vm *viewModel, templateManager templateManager.TemplateManage
 func (h *docHandler) Register(router *httprouter.Router) {
 	router.GET(documentRoot, h.DocumentRoot)
 	router.GET(home, h.Home)
-	router.GET(reader, h.Reader)
 }
 
 func (h *docHandler) Home(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -37,11 +35,8 @@ func (h *docHandler) Home(w http.ResponseWriter, r *http.Request, params httprou
 	h.templateManager.RenderTemplate(w, "home", state)
 }
 
-func (h *docHandler) Reader(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	state := h.vm.GetDefaultState()
-	h.templateManager.RenderTemplate(w, "reader", state)
-}
-
+// TODO reader page JS make next step after scroll start then stop (> 1 s)
+// TODO reader page logo add link to main page
 func (h *docHandler) DocumentRoot(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	state := h.vm.GetState(r.Context(), params.ByName("id"))
 	if state == nil {

@@ -50,13 +50,17 @@ main {
 }
 
 .doc:hover {
-    transform: scale(1.5);
+    transform: scale(3);
 }
 
 .doc>img {
     width: 1.9vw;
     height: 1.9vw;
 }
+
+/* .doc>img:hover  {
+    transform: scale(1.5);
+} */
 
 .docs-left {
     animation-name: books_to_left;
