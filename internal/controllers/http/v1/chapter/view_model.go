@@ -21,20 +21,17 @@ type paragraph struct {
 }
 
 type viewModelState struct {
-	// docs  []entity.Doc
-	ChapterID    uint64
-	Name         string
-	Abbreviation string
-	// header       *string
+	ChapterID   uint64
+	Name        string
 	Title       string
 	Description string
 	Keywords    string
+	Rev         string
 	Prev        entity.ChapterInfo
 	Next        entity.ChapterInfo
 	Num         string
 	Paragraphs  []paragraph
 	Chapters    []entity.ChapterInfo
-	Updated     string
 }
 
 type viewModel struct {
@@ -78,12 +75,12 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 		Description: chapter.Description,
 		Keywords:    chapter.Keywords,
 		Name:        chapter.Name,
+		Rev:         chapter.Rev,
 		Num:         chapter.Num,
 		Chapters:    doc.Chapters,
 		Prev:        prevChapter,
 		Next:        nextChapter,
 		Paragraphs:  paragraphs,
-		Updated:     chapter.UpdatedAt.Format("02.01.2006"),
 	}
 	return &s
 }
