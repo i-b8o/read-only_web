@@ -9,6 +9,7 @@ import (
 
 type DocService interface {
 	GetOne(ctx context.Context, docID uint64) entity.Doc
+	GetBySubtype(ctx context.Context, subtypeID uint64) []entity.Doc
 }
 type ChapterService interface {
 	GetAll(ctx context.Context, docID uint64) []entity.ChapterInfo
@@ -34,4 +35,8 @@ func (u docUsecase) GetDocumentRoot(ctx context.Context, docID uint64) *entity.D
 	// insert the chapters into the doc
 	doc.Chapters = chapters
 	return &doc
+}
+
+func (u docUsecase) GetBySubtype(ctx context.Context, subtypeID uint64) []entity.Doc {
+	return u.docService.GetBySubtype(ctx, subtypeID)
 }

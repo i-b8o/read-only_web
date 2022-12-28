@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type Doc struct {
-	Id          uint64        `json:"id,omitempty"`
+	ID          uint64        `json:"id,omitempty"`
 	Type        string        `json:"type,omitempty"`
 	Subtype     string        `json:"subtype,omitempty"`
 	Rev         string        `json:"rev,omitempty"`
@@ -16,5 +16,4 @@ type Doc struct {
 	Chapters    []ChapterInfo `json:"chapters"`
 }
 
-// TODO Add all docs page
 // TODO Add rev section in templates

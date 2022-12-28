@@ -27,3 +27,27 @@ func (rs *docStorage) Get(ctx context.Context, docID uint64) (entity.Doc, error)
 
 	return doc, nil
 }
+
+func (s *docStorage) GetBySubtype(ctx context.Context, subTypeID uint64) ([]entity.Doc, error) {
+	const sql = `select id, name from doc where subtype_id = $1;`
+
+	var docs []entity.Doc
+
+	rows, err := s.client.Query(ctx, sql, subTypeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		doc := entity.Doc{}
+		if err = rows.Scan(
+			&doc.ID, &doc.Name,
+		); err != nil {
+			return nil, err
+		}
+
+		docs = append(docs, doc)
+	}
+	return docs, nil
+}

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	subTypes = "/subs/:id"
+	subs = "/subs/:id"
 )
 
 type SubTypesTemplateManager interface {
@@ -25,14 +25,14 @@ func NewSubTypesHandler(vm *viewModel, templateManager templateManager.TemplateM
 }
 
 func (h *subTypesHandler) Register(router *httprouter.Router) {
-	router.GET(subTypes, h.SubTypes)
+	router.GET(subs, h.Subs)
 }
 
-func (h *subTypesHandler) SubTypes(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (h *subTypesHandler) Subs(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	state := h.vm.GetState(r.Context(), params.ByName("id"))
 	if state == nil {
 		http.Redirect(w, r, "/404", http.StatusNotFound)
 		return
 	}
-	h.templateManager.RenderTemplate(w, "sub_types", state)
+	h.templateManager.RenderTemplate(w, "subs", state)
 }

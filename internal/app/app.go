@@ -25,7 +25,8 @@ import (
 	chapter_controller "read-only_web/internal/controllers/http/v1/chapter"
 	doc_controller "read-only_web/internal/controllers/http/v1/doc"
 	not_found_controller "read-only_web/internal/controllers/http/v1/not_found"
-	subtypes_controller "read-only_web/internal/controllers/http/v1/sub_types"
+	subtype_controller "read-only_web/internal/controllers/http/v1/sub"
+	subtypes_controller "read-only_web/internal/controllers/http/v1/subs"
 
 	"read-only_web/internal/config"
 	templateManager "read-only_web/pkg/templmanager"
@@ -92,18 +93,21 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	docUsecase := usecase_doc.NewDocUsecase(docService, chapterService, logger)
 
 	allDocTypesModel := all_doc_types_controller.NewViewModel(allDocTypesUsecase)
-	subtypesModel := subtypes_controller.NewViewModel(allDocTypesUsecase)
+	subtypesModel := subtypes_controller.NewViewModel(allDocTypesUsecase, docUsecase)
+	subtypeModel := subtype_controller.NewViewModel(allDocTypesUsecase, docUsecase)
 	docViewModel := doc_controller.NewViewModel(docUsecase)
 	chapterViewModel := chapter_controller.NewViewModel(chapterUsecase)
 
 	allDocTypesHandler := all_doc_types_controller.NewAllDocTypesHandler(allDocTypesModel, templateManager)
 	subTypesHandler := subtypes_controller.NewSubTypesHandler(subtypesModel, templateManager)
+	subTypeHandler := subtype_controller.NewSubTypesHandler(subtypeModel, templateManager)
 	chapterHandler := chapter_controller.NewChapterHandler(chapterViewModel, templateManager)
 	docHandler := doc_controller.NewDocHandler(docViewModel, templateManager)
 	notFoundController := not_found_controller.NewNotFoundHandler(templateManager)
 
 	allDocTypesHandler.Register(router)
 	subTypesHandler.Register(router)
+	subTypeHandler.Register(router)
 	docHandler.Register(router)
 	chapterHandler.Register(router)
 	notFoundController.Register(router)

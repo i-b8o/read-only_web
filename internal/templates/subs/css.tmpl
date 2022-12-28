@@ -1,0 +1,23 @@
+{{define "css" -}}
+nav {
+    overflow-y: scroll;
+}
+@media only screen and (min-width: 821px) {
+    main {
+        padding-top: 70px;
+        overflow-y: scroll;
+    }
+    nav::-webkit-scrollbar {
+       display: none;
+    }
+    nav {
+            height: calc(100vh - 70px);
+    }
+    section > div:last-of-type {
+        margin-bottom: 50px;
+    }
+}
+
+
+}
+{{end}}

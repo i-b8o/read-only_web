@@ -1,0 +1,12 @@
+{{define "aside" -}}
+    <div id="menu-blur" onclick="menuToggle()"></div>
+    <aside>
+        <nav>
+            <ul>
+                {{range .DocSubTypes}}
+                    <li {{if eq .ID $.CurrentDocSubTypesID}}id="active-link"{{else}}{{ end }}><a href="/sub/{{$.CurrentDocTypesID}}/{{.ID}}">{{.Name}}</a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </aside>
+{{end}}

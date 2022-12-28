@@ -4,7 +4,7 @@
         <nav>
             <ul>
                 {{range .DocTypes}}
-                    <li {{if eq .ID $.TypeID}}id="active-link"{{else}}{{ end }}><a href="/sub/{{.ID}}">{{.Name}}</a></li>
+                    <li {{if eq .ID $.CurrentDocTypeID}}id="active-link"{{else}}{{ end }}><a href="/sub/{{.ID}}">{{.Name}}</a></li>
                 {{end}}
             </ul>
         </nav>
