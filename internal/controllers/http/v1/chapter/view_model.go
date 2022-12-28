@@ -75,7 +75,7 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 		Description: chapter.Description,
 		Keywords:    chapter.Keywords,
 		Name:        chapter.Name,
-		Rev:         chapter.Rev,
+		Rev:         doc.Rev,
 		Num:         chapter.Num,
 		Chapters:    doc.Chapters,
 		Prev:        prevChapter,

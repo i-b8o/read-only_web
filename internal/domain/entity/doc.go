@@ -15,5 +15,3 @@ type Doc struct {
 	UpdatedAt   *time.Time    `json:"updated_at,omitempty"`
 	Chapters    []ChapterInfo `json:"chapters"`
 }
-
-// TODO Add rev section in templates

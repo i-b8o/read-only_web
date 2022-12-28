@@ -35,8 +35,7 @@ func (h *docHandler) Home(w http.ResponseWriter, r *http.Request, params httprou
 	h.templateManager.RenderTemplate(w, "home", state)
 }
 
-// TODO reader page JS make next step after scroll start then stop (> 1 s)
-// TODO reader page logo add link to main page
+// TODO mobile css
 func (h *docHandler) DocumentRoot(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	state := h.vm.GetState(r.Context(), params.ByName("id"))
 	if state == nil {
