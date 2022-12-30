@@ -3,8 +3,6 @@ package usecase_all_doc_types
 import (
 	"context"
 	"read-only_web/internal/domain/entity"
-
-	"github.com/i-b8o/logging"
 )
 
 type TypeService interface {
@@ -18,11 +16,10 @@ type SubTypeService interface {
 type allTypesUsecase struct {
 	typeService    TypeService
 	subTypeService SubTypeService
-	logger         logging.Logger
 }
 
-func NewAllTypesUsecase(typeService TypeService, subTypeService SubTypeService, logger logging.Logger) *allTypesUsecase {
-	return &allTypesUsecase{typeService: typeService, subTypeService: subTypeService, logger: logger}
+func NewAllTypesUsecase(typeService TypeService, subTypeService SubTypeService) *allTypesUsecase {
+	return &allTypesUsecase{typeService: typeService, subTypeService: subTypeService}
 }
 
 func (u allTypesUsecase) GetAllDocTypes(ctx context.Context) []entity.DocType {

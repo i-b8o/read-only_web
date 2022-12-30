@@ -15,6 +15,7 @@ import (
 	doc_provider "read-only_web/internal/data_providers/db/postgresql/doc"
 	paragraph_provider "read-only_web/internal/data_providers/db/postgresql/paragraph"
 	sub_type_provider "read-only_web/internal/data_providers/db/postgresql/sub_type"
+	sub_type_doc_provider "read-only_web/internal/data_providers/db/postgresql/sub_type_doc"
 	type_provider "read-only_web/internal/data_providers/db/postgresql/type"
 
 	usecase_all_doc_types "read-only_web/internal/domain/usecase/all_doc_types"
@@ -78,19 +79,21 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	}
 	typeProvider := type_provider.NewTypeStorage(pgClient)
 	subTypeProvider := sub_type_provider.NewSubTypeStorage(pgClient)
+	subTypeDocProvider := sub_type_doc_provider.NewSubTypeDocStorage(pgClient)
 	docProvider := doc_provider.NewDocStorage(pgClient)
 	chapterProvider := chapter_provider.NewChapterStorage(pgClient)
 	paragraphProvider := paragraph_provider.NewParagraphStorage(pgClient)
 
 	typeService := service.NewTypeService(typeProvider, logger)
 	subTypeService := service.NewSubTypeService(subTypeProvider, logger)
+	subTypeDocService := service.NewSubTypeDocService(subTypeDocProvider, logger)
 	docService := service.NewDocService(docProvider, logger)
 	chapterService := service.NewChapterService(chapterProvider, logger)
 	paragraphService := service.NewParagraphService(paragraphProvider, logger)
 
-	allDocTypesUsecase := usecase_all_doc_types.NewAllTypesUsecase(typeService, subTypeService, logger)
-	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, docService, logger)
-	docUsecase := usecase_doc.NewDocUsecase(docService, chapterService, logger)
+	allDocTypesUsecase := usecase_all_doc_types.NewAllTypesUsecase(typeService, subTypeService)
+	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, docService)
+	docUsecase := usecase_doc.NewDocUsecase(docService, chapterService, subTypeDocService)
 
 	allDocTypesModel := all_doc_types_controller.NewViewModel(allDocTypesUsecase)
 	subtypesModel := subtypes_controller.NewViewModel(allDocTypesUsecase, docUsecase)

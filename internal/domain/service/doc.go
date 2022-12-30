@@ -10,7 +10,6 @@ import (
 
 type DocStorage interface {
 	Get(ctx context.Context, docID uint64) (entity.Doc, error)
-	GetBySubtype(ctx context.Context, subTypeID uint64) ([]entity.Doc, error)
 }
 type docService struct {
 	storage DocStorage
@@ -19,15 +18,6 @@ type docService struct {
 
 func NewDocService(storage DocStorage, logger logging.Logger) *docService {
 	return &docService{storage: storage, logger: logger}
-}
-
-func (s *docService) GetBySubtype(ctx context.Context, subtypeID uint64) []entity.Doc {
-	docs, err := s.storage.GetBySubtype(ctx, subtypeID)
-	if err != nil {
-		s.logger.Infof("error '%v' has occurred while GetBySubtype processing subtypeID: %s", err, subtypeID)
-		return nil
-	}
-	return docs
 }
 
 func (s *docService) GetOne(ctx context.Context, docID uint64) entity.Doc {

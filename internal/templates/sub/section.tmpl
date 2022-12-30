@@ -1,6 +1,6 @@
 {{define "section" -}}
 <section>
-    <h1>Содержание</h1>
+    <h1>{{.Header}}</h1>
     <hr color="#e5e7eb" size="1">
     {{range .Docs}}
         <div><a class="table-of-contents" href="/doc/{{.ID}}">{{.Name}}</a></div>

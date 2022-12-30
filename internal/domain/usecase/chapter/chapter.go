@@ -3,8 +3,6 @@ package usecase_chapter
 import (
 	"context"
 	"read-only_web/internal/domain/entity"
-
-	"github.com/i-b8o/logging"
 )
 
 type ChapterService interface {
@@ -24,11 +22,10 @@ type chapterUsecase struct {
 	chapterService   ChapterService
 	paragraphService ParagraphService
 	docService       DocService
-	logger           logging.Logger
 }
 
-func NewChapterUsecase(chapterService ChapterService, paragraphService ParagraphService, docService DocService, logger logging.Logger) *chapterUsecase {
-	return &chapterUsecase{chapterService: chapterService, paragraphService: paragraphService, docService: docService, logger: logger}
+func NewChapterUsecase(chapterService ChapterService, paragraphService ParagraphService, docService DocService) *chapterUsecase {
+	return &chapterUsecase{chapterService: chapterService, paragraphService: paragraphService, docService: docService}
 }
 
 func (u chapterUsecase) GetChapter(ctx context.Context, chapterID uint64) (*entity.Doc, *entity.Chapter) {

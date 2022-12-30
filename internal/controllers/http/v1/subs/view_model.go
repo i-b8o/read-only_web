@@ -44,9 +44,9 @@ func (vm viewModel) GetState(ctx context.Context, typeID string) *viewModelState
 	}
 	// TODO hard coding
 	s := viewModelState{
-		Title:            "Все документы",
-		Description:      "перечень правил и инструкций по охране труда",
-		Keywords:         "перечень правил, инструкции, охрана труда",
+		Title:            "Перечень",
+		Description:      "",
+		Keywords:         "",
 		CurrentDocTypeID: uint64ID,
 		DocTypes:         &docTypes,
 		DocSubTypes:      docSubTypes,

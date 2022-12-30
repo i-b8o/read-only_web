@@ -3,26 +3,25 @@ package usecase_doc
 import (
 	"context"
 	"read-only_web/internal/domain/entity"
-
-	"github.com/i-b8o/logging"
 )
 
 type DocService interface {
 	GetOne(ctx context.Context, docID uint64) entity.Doc
-	GetBySubtype(ctx context.Context, subtypeID uint64) []entity.Doc
 }
 type ChapterService interface {
 	GetAll(ctx context.Context, docID uint64) []entity.ChapterInfo
 }
-
+type SubTypeDocService interface {
+	GetAll(ctx context.Context, subtypeID uint64) []uint64
+}
 type docUsecase struct {
-	docService     DocService
-	chapterService ChapterService
-	logger         logging.Logger
+	docService        DocService
+	chapterService    ChapterService
+	subTypeDocService SubTypeDocService
 }
 
-func NewDocUsecase(docService DocService, chapterService ChapterService, logger logging.Logger) *docUsecase {
-	return &docUsecase{docService: docService, chapterService: chapterService, logger: logger}
+func NewDocUsecase(docService DocService, chapterService ChapterService, subTypeDocService SubTypeDocService) *docUsecase {
+	return &docUsecase{docService: docService, chapterService: chapterService, subTypeDocService: subTypeDocService}
 }
 
 func (u docUsecase) GetDocumentRoot(ctx context.Context, docID uint64) *entity.Doc {
@@ -37,6 +36,12 @@ func (u docUsecase) GetDocumentRoot(ctx context.Context, docID uint64) *entity.D
 	return &doc
 }
 
-func (u docUsecase) GetBySubtype(ctx context.Context, subtypeID uint64) []entity.Doc {
-	return u.docService.GetBySubtype(ctx, subtypeID)
+func (u docUsecase) GetBySubtype(ctx context.Context, subtypeID uint64) (docs []entity.Doc) {
+	docsIDs := u.subTypeDocService.GetAll(ctx, subtypeID)
+
+	for _, id := range docsIDs {
+		doc := u.docService.GetOne(ctx, id)
+		docs = append(docs, doc)
+	}
+	return docs
 }

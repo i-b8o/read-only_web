@@ -2,9 +2,10 @@ package subtypes_controller
 
 import (
 	"context"
-	"fmt"
 	"read-only_web/internal/domain/entity"
 	"strconv"
+
+	"golang.org/x/exp/slices"
 )
 
 type SubTypeUsecase interface {
@@ -16,6 +17,7 @@ type DocUsecase interface {
 }
 
 type viewModelState struct {
+	Header               string
 	Title                string
 	Description          string
 	Keywords             string
@@ -52,12 +54,13 @@ func (vm viewModel) GetState(ctx context.Context, typeID, subtypeID string) *vie
 	if docs == nil {
 		return nil
 	}
-	fmt.Printf("typeID: %d, subtypes: %v", uint64typeID, docSubTypes)
-	// TODO hard coding
+	idx := slices.IndexFunc(docSubTypes, func(dst entity.DocSubType) bool { return dst.ID == uint64subtypeID })
+	// TODO empty title description keywords
 	s := viewModelState{
-		Title:                "Все документы",
-		Description:          "перечень правил и инструкций по охране труда",
-		Keywords:             "перечень правил, инструкции, охрана труда",
+		Title:                "",
+		Description:          "",
+		Keywords:             "",
+		Header:               docSubTypes[idx].Name,
 		CurrentDocSubTypesID: uint64subtypeID,
 		CurrentDocTypesID:    uint64typeID,
 		DocSubTypes:          docSubTypes,
