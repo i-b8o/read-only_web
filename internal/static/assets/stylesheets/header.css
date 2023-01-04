@@ -30,8 +30,8 @@ header > a {
 }
 
 .logo>svg {
-    width: 2vw;
-    height: 2vw;
+    width: 1vw;
+    height: 1vw;
     margin-right: 0.5vw;
     border-radius: 10px;
     padding: 0.5vw;

@@ -2,6 +2,7 @@ package chapter_controller
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"read-only_web/internal/domain/entity"
 	"strconv"
@@ -54,7 +55,7 @@ func (vm viewModel) GetState(ctx context.Context, id string) *viewModelState {
 		return nil
 	}
 	var prevChapter, nextChapter entity.ChapterInfo
-
+	fmt.Printf("chapter order num %d\n", chapter.OrderNum)
 	// the chapter order num starts from 1 (not 0)
 	if chapter.OrderNum > 1 {
 		prevChapter = doc.Chapters[chapter.OrderNum-2]

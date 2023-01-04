@@ -8,11 +8,10 @@
         </a>
         <nav id="home-nav">
             <ul>
+                <li><a href="/all">Все документы</a></li>               
                 <li>
-                    <a href="/all">Все документы</a></li>
-                <li>
-                    <a href="/static">Читалка</a>
-                </li>
+                    {{template "reader" .}}
+                </li>    
             </ul>
         </nav>
     </header>

@@ -114,6 +114,25 @@ aside {
     border-right: 1px solid #e9ebee;
 }
 
+.reader {
+    background-color: #fe6137;
+    width: 9vw;
+    height: 40px;
+    border-radius: 5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.7vw;
+    cursor: pointer;
+}
+
+.reader svg {
+    width: 1vw;
+    fill: white;
+}
+
 .table-of-contents {
     color: rgba(92,105,117,1.00);
 }
@@ -394,6 +413,8 @@ color: #56c1f2;;
 
     nav > ul > li:last-of-type {
         margin-bottom: 50px;
+        display: flex;
+        align-items: center;
     }
 
     /* main {

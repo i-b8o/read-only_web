@@ -16,11 +16,11 @@ func NewDocStorage(client client.PostgreSQLClient) *docStorage {
 }
 
 func (rs *docStorage) Get(ctx context.Context, docID uint64) (entity.Doc, error) {
-	const sql = `SELECT id,name,title,description,keywords,rev FROM "doc" WHERE id = $1 LIMIT 1`
+	const sql = `SELECT id,name,header,title,description,keywords,rev FROM "doc" WHERE id = $1 LIMIT 1`
 	row := rs.client.QueryRow(ctx, sql, docID)
 
 	doc := entity.Doc{}
-	err := row.Scan(&doc.ID, &doc.Name, &doc.Title, &doc.Description, &doc.Keywords, &doc.Rev)
+	err := row.Scan(&doc.ID, &doc.Name, &doc.Header, &doc.Title, &doc.Description, &doc.Keywords, &doc.Rev)
 	if err != nil {
 		return entity.Doc{}, err
 	}

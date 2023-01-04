@@ -28,6 +28,7 @@ func (h *allDocTypesHandler) Register(router *httprouter.Router) {
 	router.GET(allDocTypes, h.AllDocTypes)
 }
 
+// TODO everywhere 404
 func (h *allDocTypesHandler) AllDocTypes(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	state := h.vm.GetState(r.Context())
 	if state == nil {

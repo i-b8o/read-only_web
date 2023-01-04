@@ -5,7 +5,6 @@ import (
 	"read-only_web/internal/domain/entity"
 
 	"github.com/i-b8o/logging"
-	"github.com/i-b8o/nonsense"
 )
 
 type DocStorage interface {
@@ -26,6 +25,5 @@ func (s *docService) GetOne(ctx context.Context, docID uint64) entity.Doc {
 		s.logger.Infof("error '%v' has occurred while GetOne processing docID: %s", err, docID)
 		return entity.Doc{}
 	}
-	doc.Name = nonsense.Capitalize(doc.Name)
 	return doc
 }

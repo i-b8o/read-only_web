@@ -1,6 +1,6 @@
 {{define "section" -}}
 <section>
-    <h1>{{.Title}}</h1>
+    <h1>{{.Header}}</h1>
     <hr color="#e5e7eb" size="1">
     {{range .DocSubTypes}}
         <div><a class="table-of-contents" href="/sub/{{$.CurrentDocTypeID}}/{{.ID}}">{{.Name}}</a></div>

@@ -1,7 +1,5 @@
 package main
 
-// TODO SWAGGER
-
 import (
 	"context"
 

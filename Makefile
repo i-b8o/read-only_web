@@ -25,3 +25,6 @@ update_contracts:
 
 test:
 	go test -p 1 ./...
+
+
+# TODO USP: offline mode

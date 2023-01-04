@@ -4,6 +4,8 @@ import (
 	"context"
 	"read-only_web/internal/domain/entity"
 	"strconv"
+
+	"golang.org/x/exp/slices"
 )
 
 type SubTypeUsecase interface {
@@ -15,6 +17,7 @@ type DocUsecase interface {
 }
 
 type viewModelState struct {
+	Header           string
 	Title            string
 	Description      string
 	Keywords         string
@@ -42,11 +45,14 @@ func (vm viewModel) GetState(ctx context.Context, typeID string) *viewModelState
 	if docTypes == nil {
 		return nil
 	}
+	idx := slices.IndexFunc(docTypes, func(dst entity.DocType) bool { return dst.ID == uint64ID })
+
 	// TODO hard coding
 	s := viewModelState{
-		Title:            "Перечень",
+		Title:            "",
 		Description:      "",
 		Keywords:         "",
+		Header:           docTypes[idx].Name,
 		CurrentDocTypeID: uint64ID,
 		DocTypes:         &docTypes,
 		DocSubTypes:      docSubTypes,
