@@ -17,6 +17,7 @@ import (
 	sub_type_provider "read-only_web/internal/data_providers/db/postgresql/sub_type"
 	sub_type_doc_provider "read-only_web/internal/data_providers/db/postgresql/sub_type_doc"
 	type_provider "read-only_web/internal/data_providers/db/postgresql/type"
+	seaqrch_provider "read-only_web/internal/data_providers/grpc"
 
 	usecase_all_doc_types "read-only_web/internal/domain/usecase/all_doc_types"
 	usecase_chapter "read-only_web/internal/domain/usecase/chapter"
@@ -26,6 +27,7 @@ import (
 	chapter_controller "read-only_web/internal/controllers/http/v1/chapter"
 	doc_controller "read-only_web/internal/controllers/http/v1/doc"
 	not_found_controller "read-only_web/internal/controllers/http/v1/not_found"
+	search_controller "read-only_web/internal/controllers/http/v1/search"
 	subtype_controller "read-only_web/internal/controllers/http/v1/sub"
 	subtypes_controller "read-only_web/internal/controllers/http/v1/subs"
 
@@ -33,10 +35,12 @@ import (
 	templateManager "read-only_web/pkg/templmanager"
 
 	"github.com/i-b8o/logging"
+	pb "github.com/i-b8o/read-only_contracts/pb/searcher/v1"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc"
 )
 
 type App struct {
@@ -77,6 +81,17 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	if err != nil {
 		logger.Fatal(err)
 	}
+
+	conn, err := grpc.Dial(
+		fmt.Sprintf("%s:%d", config.Search.IP, config.Search.Port),
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		return App{}, err
+	}
+	searchGrpcClient := pb.NewSearcherGRPCClient(conn)
+
+	searchProvider := seaqrch_provider.NewSearchStorage(searchGrpcClient)
 	typeProvider := type_provider.NewTypeStorage(pgClient)
 	subTypeProvider := sub_type_provider.NewSubTypeStorage(pgClient)
 	subTypeDocProvider := sub_type_doc_provider.NewSubTypeDocStorage(pgClient)
@@ -84,6 +99,7 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	chapterProvider := chapter_provider.NewChapterStorage(pgClient)
 	paragraphProvider := paragraph_provider.NewParagraphStorage(pgClient)
 
+	searchService := service.NewSearchService(searchProvider, logger)
 	typeService := service.NewTypeService(typeProvider, logger)
 	subTypeService := service.NewSubTypeService(subTypeProvider, logger)
 	subTypeDocService := service.NewSubTypeDocService(subTypeDocProvider, logger)
@@ -95,6 +111,7 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	chapterUsecase := usecase_chapter.NewChapterUsecase(chapterService, paragraphService, docService)
 	docUsecase := usecase_doc.NewDocUsecase(docService, chapterService, subTypeDocService)
 
+	searchViewModel := search_controller.NewViewModel(searchService)
 	allDocTypesModel := all_doc_types_controller.NewViewModel(allDocTypesUsecase)
 	subtypesModel := subtypes_controller.NewViewModel(allDocTypesUsecase, docUsecase)
 	subtypeModel := subtype_controller.NewViewModel(allDocTypesUsecase, docUsecase)
@@ -106,14 +123,16 @@ func NewApp(ctx context.Context, config *config.Config) (App, error) {
 	subTypeHandler := subtype_controller.NewSubTypesHandler(subtypeModel, templateManager)
 	chapterHandler := chapter_controller.NewChapterHandler(chapterViewModel, templateManager)
 	docHandler := doc_controller.NewDocHandler(docViewModel, templateManager)
-	notFoundController := not_found_controller.NewNotFoundHandler(templateManager)
+	notFoundHandler := not_found_controller.NewNotFoundHandler(templateManager)
+	searchHandler := search_controller.NewSearchHandler(searchViewModel, templateManager)
 
 	allDocTypesHandler.Register(router)
 	subTypesHandler.Register(router)
 	subTypeHandler.Register(router)
 	docHandler.Register(router)
 	chapterHandler.Register(router)
-	notFoundController.Register(router)
+	notFoundHandler.Register(router)
+	searchHandler.Register(router)
 
 	return App{cfg: config, router: router, logger: logger}, nil
 }

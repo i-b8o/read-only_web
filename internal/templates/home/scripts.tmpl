@@ -88,7 +88,7 @@ class Pagination {
     console.log("set")
         this.index = parseInt(el.innerText);
         this.reset();
-        fetch(`/${r}search?req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
+        fetch(`/search?subj=${r}&req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
         .then(res => res.json())
         .then(json => {
             searchRender(json, this.lastPage);
@@ -126,7 +126,7 @@ class Pagination {
     console.log("next")
         ++this.index;
         this.reset();
-         fetch(`/${r}search?req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
+         fetch(`/search?subj=${r}&req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
         .then(res => res.json())
         .then(json => {
             searchRender(json, this.lastPage);
@@ -150,7 +150,7 @@ class Pagination {
         if (this.index == 1) return;
         --this.index;
         this.reset();
-         fetch(`/${r}search?req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
+         fetch(`/search?subj=${r}&req=${searchQuery}&offset=${(this.index-1)*this.offset}&limit=${this.offset}`)
         .then(res => res.json())
         .then(json => {
             searchRender(json, this.lastPage);
@@ -176,15 +176,15 @@ class Pagination {
 </script>
 <script>
 // Dropdown options handler
-let r = "";
+let r = "g";
 function optionsClicked(e){
     let homeSearchInput = document.getElementById("search");
     document.getElementsByClassName("dropdown-text")[0].innerText = e.innerText;
     if (e.innerText == "Везде"){
-        r = "";
+        r = "g";
         homeSearchInput.placeholder = "Поиск...";
     } else if (e.innerText == "Документ"){
-        r = "r";
+        r = "d";
         homeSearchInput.placeholder = "Поиск по названию документа...";
     } else if (e.innerText == "Глава"){
         r = "c";
@@ -214,23 +214,23 @@ function searchRender(json, n){
             innerHtml = '';
             href = '';
             aClass = '';
-            text = json[i].text.replace(/<\/?[^>]+(>|$)/g, "");
+            text = json[i].Text.replace(/<\/?[^>]+(>|$)/g, "");
             // a doc as the search result
-            if(json[i].r_id){
+            if(json[i].DocID){
                 aClass = "reg";
-                href="/doc/" + json[i].r_id;
-                innerHtml = '<div class="">' + json[i].r_name + '</div>'
-            } else if (json[i].p_id) { // a paragraph as the search result
+                href="/doc/" + json[i].DocID;
+                innerHtml = '<div class="">' + json[i].DocName + '</div>'
+            } else if (json[i].ParagraphID) { // a paragraph as the search result
                 aClass = "par";
-                href= "/chapter/" + json[i].c_id + "#" + json[i].p_id;
-                innerHtml = '<div class="">' + json[i].r_name + '</div>';
-                innerHtml += '<div class="">' + json[i].c_name + '</div>';
-                innerHtml += '<div class="">' + json[i].text.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ") + '</div>';
-            } else if (json[i].c_id){
+                href= "/chapter/" + json[i].ChapterID + "#" + json[i].ParagraphID;
+                innerHtml = '<div class="">' + json[i].DocName + '</div>';
+                innerHtml += '<div class="">' + json[i].ChapterName + '</div>';
+                innerHtml += '<div class="">' + json[i].Text.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ") + '</div>';
+            } else if (json[i].ChapterID){
                 aClass = "cha";
-                href= "/chapter/" + json[i].c_id;
-                innerHtml = '<div class="">' + json[i].r_name + '</div>';
-                innerHtml += '<div class="">' + json[i].text + '</div>';
+                href= "/chapter/" + json[i].ChapterID;
+                innerHtml = '<div class="">' + json[i].DocName + '</div>';
+                innerHtml += '<div class="">' + json[i].Text + '</div>';
             }
 
             htmlStr += '<a href="' + href + '" class="' + aClass + '">' + innerHtml + '</a>';
@@ -307,7 +307,7 @@ document.getElementById('search').onkeydown = function(e){
         searchQuery = homeSearchInput.value;
         homeSearchResults.innerHTML = '';
         homeSearchResults.style.display = "none";
-        fetch(`/${r}search?req=${searchQuery}&offset=0&limit=${pagination.offset}`)
+        fetch(`/search?subj=${r}&req=${searchQuery}&offset=0&limit=${pagination.offset}`)
         .then(res => res.json())
         .then(json => {
             if (json && json.length > 0) {

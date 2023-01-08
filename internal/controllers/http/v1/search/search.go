@@ -2,19 +2,17 @@ package search_controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strconv"
 
 	templateManager "read-only_web/pkg/templmanager"
 
+	pb_searcher "github.com/i-b8o/read-only_contracts/pb/searcher/v1"
 	"github.com/julienschmidt/httprouter"
 )
 
 const (
-	search  = "/search"
-	rsearch = "/rsearch"
-	csearch = "/csearch"
-	psearch = "/psearch"
+	search = "/search"
 )
 
 type searchHandler struct {
@@ -22,113 +20,46 @@ type searchHandler struct {
 	templateManager templateManager.TemplateManager
 }
 
-func NewDocHandler(vm *viewModel, templateManager templateManager.TemplateManager) *searchHandler {
+func NewSearchHandler(vm *viewModel, templateManager templateManager.TemplateManager) *searchHandler {
 	return &searchHandler{vm: vm, templateManager: templateManager}
 }
 
 func (h *searchHandler) Register(router *httprouter.Router) {
 	router.GET(search, h.Search)
-	router.GET(rsearch, h.RSearch)
-	router.GET(csearch, h.ChSearch)
-	router.GET(psearch, h.PSearch)
+}
+
+func parseParams(r *http.Request, params httprouter.Params) *req {
+	queryValues := r.URL.Query()
+	searchQuery := queryValues.Get("req")
+	limit := queryValues.Get("limit")
+	offset := queryValues.Get("offset")
+	var subj pb_searcher.SearchRequest_Subject
+	switch subject := queryValues.Get("subj"); subject {
+	case "g":
+		subj = pb_searcher.SearchRequest_General
+	case "d":
+		subj = pb_searcher.SearchRequest_Docs
+	case "c":
+		subj = pb_searcher.SearchRequest_Chapters
+	case "p":
+		subj = pb_searcher.SearchRequest_Pargaraphs
+	default:
+		return nil
+	}
+	fmt.Printf("query: %s offset: %s, limit: %s, subj: %s", searchQuery, offset, limit, subj)
+	return &req{query: searchQuery, offset: offset, limit: limit, subj: subj}
 }
 
 func (h *searchHandler) Search(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	queryValues := r.URL.Query()
-	searchQuery := queryValues.Get("req")
-
-	limit := queryValues.Get("limit")
-	offset := queryValues.Get("offset")
-
-	// type-conversion then validate id is a positive num
-	uint64Offset, err := strconv.ParseUint(offset, 10, 64)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err.Error())
+	req := parseParams(r, params)
+	if req == nil {
+		http.Redirect(w, r, "/404", http.StatusNotFound)
 		return
 	}
-	uint64Limit, err := strconv.ParseUint(limit, 10, 64)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err.Error())
+	state := h.vm.GetState(r.Context(), req)
+	if state == nil {
+		http.Redirect(w, r, "/404", http.StatusNotFound)
 		return
 	}
-	searchResults, err := h.searchService.Search(r.Context(), searchQuery, uint32(uint64Offset), uint32(uint64Limit))
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err.Error())
-	}
-	json.NewEncoder(w).Encode(searchResults)
-}
-
-func (h *searchHandler) RSearch(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	queryValues := r.URL.Query()
-	searchQuery := queryValues.Get("req")
-
-	limit := queryValues.Get("limit")
-	offset := queryValues.Get("offset")
-	if len(limit) == 0 || len(offset) == 0 {
-		searchResults, err := h.searchService.RegSearch(r.Context(), searchQuery)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err.Error())
-		}
-		json.NewEncoder(w).Encode(searchResults)
-		return
-	}
-
-	searchResults, err := h.searchService.RegSearch(r.Context(), searchQuery, offset, limit)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err.Error())
-	}
-	json.NewEncoder(w).Encode(searchResults)
-}
-
-func (h *searchHandler) ChSearch(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	queryValues := r.URL.Query()
-	searchQuery := queryValues.Get("req")
-
-	limit := queryValues.Get("limit")
-	offset := queryValues.Get("offset")
-	if len(limit) == 0 || len(offset) == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode("limit and offset must be more than zero")
-		searchResults, err := h.searchService.ChSearch(r.Context(), searchQuery)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err.Error())
-		}
-		json.NewEncoder(w).Encode(searchResults)
-		return
-	}
-	searchResults, err := h.searchService.ChSearch(r.Context(), searchQuery, offset, limit)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err.Error())
-	}
-	json.NewEncoder(w).Encode(searchResults)
-}
-
-func (h *searchHandler) PSearch(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	queryValues := r.URL.Query()
-	searchQuery := queryValues.Get("req")
-	limit := queryValues.Get("limit")
-	offset := queryValues.Get("offset")
-
-	if len(limit) == 0 || len(offset) == 0 {
-		searchResults, err := h.searchService.PSearch(r.Context(), searchQuery, offset, limit)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(err.Error())
-		}
-		json.NewEncoder(w).Encode(searchResults)
-		return
-	}
-	searchResults, err := h.searchService.PSearch(r.Context(), searchQuery, offset, limit)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err.Error())
-	}
-	json.NewEncoder(w).Encode(searchResults)
+	json.NewEncoder(w).Encode(state.resp)
 }

@@ -357,6 +357,7 @@ color: #56c1f2;;
     overflow-x: hidden;
     flex-shrink: 1;
     flex-grow: 1;
+    border: 1px solid white;
 }
 
 #search-input > div:first-of-type {

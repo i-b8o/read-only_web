@@ -3,64 +3,30 @@ package service
 import (
 	"context"
 
+	"github.com/i-b8o/logging"
 	pb "github.com/i-b8o/read-only_contracts/pb/searcher/v1"
 )
 
 type SearchStorage interface {
-	Docs(ctx context.Context, req pb.SearchRequest) ([]*pb.SearchResponse, error)
-	Chapters(ctx context.Context, req pb.SearchRequest) ([]*pb.SearchResponse, error)
-	Pargaraphs(ctx context.Context, req pb.SearchRequest) ([]*pb.SearchResponse, error)
-	General(ctx context.Context, req pb.SearchRequest) ([]*pb.SearchResponse, error)
+	Search(ctx context.Context, req pb.SearchRequest) ([]*pb.SearchResponse, error)
 }
 
 type searchService struct {
 	storage SearchStorage
+	logger  logging.Logger
 }
 
-func NewSearchService(storage SearchStorage) *searchService {
-	return &searchService{storage: storage}
+func NewSearchService(storage SearchStorage, logger logging.Logger) *searchService {
+	return &searchService{storage: storage, logger: logger}
 }
 
-func (ss searchService) Search(ctx context.Context, searchQuery string, params ...uint32) ([]*pb.SearchResponse, error) {
-	offset := uint32(0)
-	limit := uint32(0)
-	if len(params) == 2 {
-		offset = params[1]
-		limit = params[2]
+func (ss searchService) Search(ctx context.Context, searchQuery string, subj pb.SearchRequest_Subject, params ...uint32) ([]*pb.SearchResponse, error) {
+	if len(params) != 2 {
+		req := pb.SearchRequest{SearchQuery: searchQuery, Subject: subj}
+		return ss.storage.Search(ctx, req)
 	}
-	req := pb.SearchRequest{SearchQuery: searchQuery, Limit: limit, Offset: offset}
-	return ss.storage.Docs(ctx, req)
-}
-
-func (ss searchService) DocSearch(ctx context.Context, searchQuery string, params ...uint32) ([]*pb.SearchResponse, error) {
-	offset := uint32(0)
-	limit := uint32(0)
-	if len(params) == 2 {
-		offset = params[1]
-		limit = params[2]
-	}
-	req := pb.SearchRequest{SearchQuery: searchQuery, Limit: limit, Offset: offset}
-	return ss.storage.Chapters(ctx, req)
-}
-
-func (ss searchService) ChSearch(ctx context.Context, searchQuery string, params ...uint32) ([]*pb.SearchResponse, error) {
-	offset := uint32(0)
-	limit := uint32(0)
-	if len(params) == 2 {
-		offset = params[1]
-		limit = params[2]
-	}
-	req := pb.SearchRequest{SearchQuery: searchQuery, Limit: limit, Offset: offset}
-	return ss.storage.Pargaraphs(ctx, req)
-}
-
-func (ss searchService) PSearch(ctx context.Context, searchQuery string, params ...uint32) ([]*pb.SearchResponse, error) {
-	offset := uint32(0)
-	limit := uint32(0)
-	if len(params) == 2 {
-		offset = params[1]
-		limit = params[2]
-	}
-	req := pb.SearchRequest{SearchQuery: searchQuery, Limit: limit, Offset: offset}
-	return ss.storage.General(ctx, req)
+	offset := params[0]
+	limit := params[1]
+	req := pb.SearchRequest{SearchQuery: searchQuery, Limit: limit, Offset: offset, Subject: subj}
+	return ss.storage.Search(ctx, req)
 }

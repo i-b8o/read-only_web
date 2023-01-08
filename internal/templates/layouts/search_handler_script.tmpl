@@ -23,12 +23,14 @@
     }
 
     function search() {
+    console.log(`searchQuery`);
         searchQuery = searchInput.value;
         let searchResults = document.getElementById("search-results");
         let searchWindow = document.getElementById("search-window"); 
         if (searchQuery.length > 3){
+            console.log(`searchQuery: ${searchQuery}`);
             searchWindow.style.borderRadius = "8px 8px 0px 0px";
-            let respText = httpGet("/search?req="+searchQuery);
+            let respText = httpGet("/search?subj=g&req="+searchQuery);
             let parsedJSON = "";
             if (respText.length > 0){
                 parsedJSON = JSON.parse(respText)
@@ -43,26 +45,27 @@
                 let re = new RegExp(searchQueryFirstWord, 'gi'); 
                 htmlStr = '';
                 for (var i=0;i<parsedJSON.length;i++) {
+
                     innerHtml = '';
                     href = '';
                     aClass = '';
-                    text = parsedJSON[i].text.replace(/<\/?[^>]+(>|$)/g, "");
+                    text = parsedJSON[i].Text.replace(/<\/?[^>]+(>|$)/g, "");
                     // a doc as the search result
-                    if(parsedJSON[i].r_id){
+                    if(parsedJSON[i].DocID){
                         aClass = "reg";
-                        href="/doc/" + parsedJSON[i].r_id;
-                        innerHtml = '<div class="r-inner">' + parsedJSON[i].r_name.replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>'
-                    } else if (parsedJSON[i].c_id && parsedJSON[i].p_id) { // a paragraph as the search result
+                        href="/doc/" + parsedJSON[i].DocID;
+                        innerHtml = '<div class="r-inner">' + parsedJSON[i].DocName.replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>'
+                    } else if (parsedJSON[i].ChapterID && parsedJSON[i].ParagraphID) { // a paragraph as the search result
                         aClass = "par";
-                        href=parsedJSON[i].c_id + "#" + parsedJSON[i].p_id;
-                        innerHtml = '<div class="r-inner">' + parsedJSON[i].r_name + '</div>';
-                        innerHtml += '<div class="ch-inner">' + parsedJSON[i].c_name + '</div>';
-                        innerHtml += '<div class="p-inner">' + parsedJSON[i].text.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ").replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>';
-                    } else if (parsedJSON[i].c_id){
+                        href=parsedJSON[i].ChapterID + "#" + parsedJSON[i].ParagraphID;
+                        innerHtml = '<div class="r-inner">' + parsedJSON[i].DocName + '</div>';
+                        innerHtml += '<div class="ch-inner">' + parsedJSON[i].ChapterName + '</div>';
+                        innerHtml += '<div class="p-inner">' + parsedJSON[i].Text.replace(/<\/?[^>]+(>|$)/g, "").replace(/(\r\n|\n|\r)/gm, " ").replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>';
+                    } else if (parsedJSON[i].ChapterID){
                         aClass = "cha";
-                        href= "/chapter/" + parsedJSON[i].c_id;
-                        innerHtml = '<div class="r-inner">' + parsedJSON[i].r_name + '</div>';
-                        innerHtml += '<div class="ch-inner">' + parsedJSON[i].text.replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>';
+                        href= "/chapter/" + parsedJSON[i].ChapterID;
+                        innerHtml = '<div class="r-inner">' + parsedJSON[i].DocName + '</div>';
+                        innerHtml += '<div class="ch-inner">' + parsedJSON[i].Text.replaceAll(re, '<span class="search-select">' + searchQueryFirstWord + '</span>') + '</div>';
                     }
 
                     htmlStr += '<a href="' + href + '" class="' + aClass + '">' + innerHtml + '</a>';

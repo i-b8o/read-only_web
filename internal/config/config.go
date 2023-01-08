@@ -15,6 +15,10 @@ type Config struct {
 		Token    string `yaml:"token"`
 		ChatID   string `yaml:"id"`
 	} `yaml:"hook"`
+	Search struct {
+		IP   string `yaml:"ip" env:"GRPC-IP"`
+		Port int    `yaml:"port" env:"GRPC-PORT"`
+	} `yaml:"search"`
 	HTTP struct {
 		IP   string `yaml:"ip" env:"GRPC-IP"`
 		Port int    `yaml:"port" env:"GRPC-PORT"`
